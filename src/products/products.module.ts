@@ -10,6 +10,7 @@ import { Product } from './entities/product.entity';
   ],
   controllers: [ProductsController],
   providers: [ProductsService],
+  exports: [ProductsService,TypeOrmModule],
 
 })
 export class ProductsModule {}

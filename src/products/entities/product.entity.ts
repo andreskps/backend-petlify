@@ -44,12 +44,6 @@ export class Product {
   })
   isActive: boolean;
 
-  @Column({
-    type: 'text',
-    array: true,
-    default: [],
-  })
-  tags: string[];
 
   // @ManyToOne(() => User, user => user.products)
   // user: User;
@@ -66,14 +60,10 @@ export class Product {
   // @OneToMany(() => Review, review => review.product)
   // reviews: Review[];
 
-  // @OneToMany(() => WishList, wishList => wishList.product)
-  // wishLists: WishList[];
-
   // @OneToMany(() => ProductTag, productTag => productTag.product)
   // productTags: ProductTag[];
 
-  // @OneToMany(() => ProductImage, productImage => productImage.product)
-  // productImages: ProductImage[];
+
 
   // @OneToMany(() => ProductAttribute, productAttribute => productAttribute.product)
   // productAttributes: ProductAttribute[];
@@ -87,17 +77,12 @@ export class Product {
   // @OneToMany(() => ProductVariant, productVariant => productVariant.product)
   // productVariants: ProductVariant[];
 
-  // @OneToMany(() => ProductOption, productOption => productOption.product)
-  // productOptions: ProductOption[];
+
 
   // @OneToMany(() => ProductReview, productReview => productReview.product)
   // productReviews: ProductReview[];
 
-  // @OneToMany(() => ProductCategory, productCategory => productCategory.product)
-  // productCategories: ProductCategory[];
 
-  // @OneToMany(() => ProductAttribute, productAttribute => productAttribute.product)
-  // productAttributes: ProductAttribute[];
 
   // @OneToMany(() => ProductTag, productTag => productTag.product)
   // productTags: ProductTag[];
