@@ -1,4 +1,12 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Subcategory } from 'src/categories/entities/subcategory.entity';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class Product {
@@ -18,17 +26,36 @@ export class Product {
   })
   priceCompare: number;
 
-
   @Column('text')
   description: string;
 
+  @Column('text', {
+    unique: true,
+  })
+  slug: string;
 
+  @Column('int', {
+    default: 0,
+  })
+  stock: number;
+
+  @Column('boolean', {
+    default: true,
+  })
+  isActive: boolean;
+
+  @Column({
+    type: 'text',
+    array: true,
+    default: [],
+  })
+  tags: string[];
 
   // @ManyToOne(() => User, user => user.products)
   // user: User;
 
-  // @ManyToOne(() => Category, category => category.products)
-  // category: Category;
+  @ManyToOne(() => Subcategory, subcategory => subcategory.products)
+  category: Subcategory;
 
   // @OneToMany(() => OrderDetail, orderDetail => orderDetail.product)
   // orderDetails: OrderDetail[];
@@ -77,4 +104,20 @@ export class Product {
 
   // @OneToMany(() => ProductImage, productImage => productImage.product)
   // productImages: ProductImage[];
+
+  @BeforeInsert()
+  checkSlugInsert() {
+    if (!this.slug) {
+      this.slug = this.title;
+    }
+    this.slug = this.slug.replace(/\s+/g, '-').toLowerCase();
+  }
+
+  @BeforeUpdate()
+  checkSlugUpdate() {
+    if (!this.slug) {
+      this.slug = this.title;
+    }
+    this.slug = this.slug.replace(/\s+/g, '-').toLowerCase();
+  }
 }
