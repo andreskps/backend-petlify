@@ -18,15 +18,15 @@ export class Product {
   @Column('text')
   title: string;
 
-  @Column('float', {
-    nullable: false,
-  })
-  price: number;
+  // @Column('float', {
+  //   nullable: false,
+  // })
+  // price: number;
 
-  @Column('float', {
-    nullable: true,
-  })
-  priceCompare: number;
+  // @Column('float', {
+  //   nullable: true,
+  // })
+  // priceCompare: number;
 
   @Column('text')
   description: string;
@@ -36,10 +36,10 @@ export class Product {
   })
   slug: string;
 
-  @Column('int', {
-    default: 0,
-  })
-  stock: number;
+  // @Column('int', {
+  //   default: 0,
+  // })
+  // stock: number;
 
   @Column('boolean', {
     default: true,
