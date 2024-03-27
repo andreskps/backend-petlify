@@ -5,8 +5,10 @@ import {
   Column,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { ProductVariant } from './product-variant.entity';
 
 @Entity()
 export class Product {
@@ -44,6 +46,13 @@ export class Product {
   })
   isActive: boolean;
 
+  @Column('boolean', {
+    default: false,
+  })
+  isPopular: boolean;
+
+  
+
 
   // @ManyToOne(() => User, user => user.products)
   // user: User;
@@ -74,8 +83,8 @@ export class Product {
   // @OneToMany(() => ProductSpecification, productSpecification => productSpecification.product)
   // productSpecifications: ProductSpecification[];
 
-  // @OneToMany(() => ProductVariant, productVariant => productVariant.product)
-  // productVariants: ProductVariant[];
+  @OneToMany(() => ProductVariant, productVariant => productVariant.product)
+  productVariants: ProductVariant[];
 
 
 

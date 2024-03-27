@@ -5,6 +5,7 @@ import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { comparePasswords } from 'src/common/utils/bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { JwtPayload } from './interfaces/jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
@@ -31,22 +32,19 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const payload = {
+    const access_token = this.createJwt({
+      id: user.id,
       email: user.email,
       userName: user.name,
-      sub: user.id,
-    };
+    });
 
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token,
     };
   }
 
-  findAll() {
-    return `This action returns all auth`;
-  }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
+  private createJwt(payload: JwtPayload) {
+    return this.jwtService.sign(payload);
   }
 }

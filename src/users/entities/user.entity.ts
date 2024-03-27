@@ -25,6 +25,11 @@ export class User {
     })
     isActive:boolean;
 
+    @Column('text',{
+        nullable:true
+    })
+    token:string;
+
     @Column('enum',{
         enum:ValidRoles,
         array:true,
