@@ -1,16 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import { hashPassword } from 'src/common/utils/bcrypt';
+import { ErrorHandlingService } from 'src/common/services/ErrorHandling.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+
+    private errorHandlingService: ErrorHandlingService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -25,7 +32,12 @@ export class UsersService {
 
       return newUser;
     } catch (error) {
-      console.log(error);
+      if (error instanceof QueryFailedError) {
+        return this.errorHandlingService.handleDBError(error);
+      }
+
+      return this.errorHandlingService.handleErrors(error);
+      
     }
   }
 

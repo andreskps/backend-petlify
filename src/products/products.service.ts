@@ -69,23 +69,21 @@ export class ProductsService {
     return `This action returns all products`;
   }
 
-  
-
-       
-
-
   async findOne(id: string) {
     const product = await this.productRepository.findOne({
       where: {
         id: id,
       },
-      relations: ['productVariants','productVariants.attributeOptionVariants.option.attribute'],
-    })
-  
+      relations: [
+        'productVariants',
+        'productVariants.attributeOptionVariants.option.attribute',
+      ],
+    });
+
     if (!product) {
       throw new NotFoundException(`Product not found`);
     }
-  
+
     const mappedProduct = {
       id: product.id,
       title: product.title,
@@ -93,7 +91,7 @@ export class ProductsService {
       slug: product.slug,
       isActive: product.isActive,
       isPopular: product.isPopular,
-      variants: product.productVariants.map(variant => ({
+      variants: product.productVariants.map((variant) => ({
         id: variant.id,
         price: variant.price,
         stock: variant.stock,
@@ -103,7 +101,7 @@ export class ProductsService {
         }, {}),
       })),
     };
-  
+
     return mappedProduct;
   }
 
