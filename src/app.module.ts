@@ -9,6 +9,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { OrderModule } from './order/order.module';
 import { BrandModule } from './brand/brand.module';
+import { PetModule } from './pet/pet.module';
 
 @Module({
   imports: [
@@ -40,6 +41,8 @@ import { BrandModule } from './brand/brand.module';
     OrderModule,
 
     BrandModule,
+
+    PetModule,
   ],
   controllers: [AppController],
   providers: [AppService],

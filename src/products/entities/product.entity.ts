@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { ProductVariant } from './product-variant.entity';
 import { Brand } from 'src/brand/entities/brand.entity';
+import { Pet } from 'src/pet/entities/pet.entity';
 
 @Entity()
 export class Product {
@@ -60,6 +61,9 @@ export class Product {
 
   @ManyToOne(() => Brand, (brand) => brand.products)
   brand: Brand;
+
+  @ManyToOne(() => Pet, (pet) => pet.products)
+  pet: Pet;
 
   // @OneToMany(() => Review, review => review.product)
   // reviews: Review[];
