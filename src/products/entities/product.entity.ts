@@ -9,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ProductVariant } from './product-variant.entity';
+import { Brand } from 'src/brand/entities/brand.entity';
 
 @Entity()
 export class Product {
@@ -51,31 +52,17 @@ export class Product {
   })
   isPopular: boolean;
 
-  
-
-
   // @ManyToOne(() => User, user => user.products)
   // user: User;
 
-  @ManyToOne(() => Subcategory, subcategory => subcategory.products)
+  @ManyToOne(() => Subcategory, (subcategory) => subcategory.products)
   category: Subcategory;
 
-  // @OneToMany(() => OrderDetail, orderDetail => orderDetail.product)
-  // orderDetails: OrderDetail[];
-
-  // @OneToMany(() => Cart, cart => cart.product)
-  // carts: Cart[];
+  @ManyToOne(() => Brand, (brand) => brand.products)
+  brand: Brand;
 
   // @OneToMany(() => Review, review => review.product)
   // reviews: Review[];
-
-  // @OneToMany(() => ProductTag, productTag => productTag.product)
-  // productTags: ProductTag[];
-
-
-
-  // @OneToMany(() => ProductAttribute, productAttribute => productAttribute.product)
-  // productAttributes: ProductAttribute[];
 
   // @OneToMany(() => ProductDiscount, productDiscount => productDiscount.product)
   // productDiscounts: ProductDiscount[];
@@ -83,15 +70,11 @@ export class Product {
   // @OneToMany(() => ProductSpecification, productSpecification => productSpecification.product)
   // productSpecifications: ProductSpecification[];
 
-  @OneToMany(() => ProductVariant, productVariant => productVariant.product)
+  @OneToMany(() => ProductVariant, (productVariant) => productVariant.product)
   productVariants: ProductVariant[];
-
-
 
   // @OneToMany(() => ProductReview, productReview => productReview.product)
   // productReviews: ProductReview[];
-
-
 
   // @OneToMany(() => ProductTag, productTag => productTag.product)
   // productTags: ProductTag[];
