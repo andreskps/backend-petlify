@@ -11,6 +11,7 @@ import { OrderModule } from './order/order.module';
 import { BrandModule } from './brand/brand.module';
 import { PetModule } from './pet/pet.module';
 import { BadgeModule } from './badge/badge.module';
+import { ReviewModule } from './review/review.module';
 
 @Module({
   imports: [
@@ -46,6 +47,8 @@ import { BadgeModule } from './badge/badge.module';
     PetModule,
 
     BadgeModule,
+
+    ReviewModule,
 
   ],
   controllers: [AppController],

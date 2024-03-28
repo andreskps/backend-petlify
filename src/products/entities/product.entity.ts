@@ -11,6 +11,7 @@ import {
 import { ProductVariant } from './product-variant.entity';
 import { Brand } from 'src/brand/entities/brand.entity';
 import { Pet } from 'src/pet/entities/pet.entity';
+import { Review } from 'src/review/entities/review.entity';
 
 @Entity()
 export class Product {
@@ -65,8 +66,8 @@ export class Product {
   @ManyToOne(() => Pet, (pet) => pet.products)
   pet: Pet;
 
-  // @OneToMany(() => Review, review => review.product)
-  // reviews: Review[];
+  @OneToMany(() => Review, review => review.product)
+  reviews: Review[];
 
   // @OneToMany(() => ProductDiscount, productDiscount => productDiscount.product)
   // productDiscounts: ProductDiscount[];

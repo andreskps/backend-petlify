@@ -1,6 +1,7 @@
 import { ValidRoles } from "src/auth/enums/Validate-Roles.enum";
 import { UserBadge } from "src/badge/entities/user-badge.entity";
 import { Order } from "src/order/entities/order.entity";
+import { Review } from "src/review/entities/review.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
@@ -44,5 +45,8 @@ export class User {
 
     @OneToMany(()=>UserBadge,userBadge=>userBadge.user)
     userBadge:UserBadge[];
+
+    @OneToMany(()=>Review,review=>review.user)
+    reviews:Review[];
 
 }
