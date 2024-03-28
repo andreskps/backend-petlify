@@ -2,13 +2,16 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
 import { Product } from './product.entity';
 import { AttributeOptionVariant } from './attributeOptionVariant.entity';
+import { OrderItem } from 'src/order/entities/orderItem.entity';
 
 @Entity()
 export class ProductVariant {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
+  @Column({
+    nullable: false
+  })
   price: number;
 
   @Column()
@@ -19,4 +22,7 @@ export class ProductVariant {
 
   @OneToMany(() => AttributeOptionVariant, attributeOptionVariant => attributeOptionVariant.variant)
   attributeOptionVariants: AttributeOptionVariant[];
+
+  @OneToMany(() => OrderItem, orderItem => orderItem.productVariant)
+  orderItems: OrderItem[];
 }

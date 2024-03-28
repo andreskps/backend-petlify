@@ -4,11 +4,13 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { OrderStatus } from '../enums/orderStatus.enum';
 import { PaymentMethod } from '../enums/paymentMethod.enum';
+import { OrderItem } from './orderItem.entity';
 
 @Entity()
 export class Order {
@@ -41,17 +43,19 @@ export class Order {
   @Column({
     type: 'enum',
     nullable: true,
-    enum:PaymentMethod,
+    enum: PaymentMethod,
   })
   paymentMethod: PaymentMethod;
-
-  @ManyToOne(() => User, (user) => user.orders)
-  user: User;
 
   @CreateDateColumn()
   createdDate: Date;
 
-  
   @UpdateDateColumn()
   updatedDate: Date;
+
+  @ManyToOne(() => User, (user) => user.orders)
+  user: User;
+
+  @OneToMany(() => OrderItem, (orderItem) => orderItem.order)
+  orderItems: OrderItem[];
 }
