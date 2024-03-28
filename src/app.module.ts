@@ -10,6 +10,7 @@ import { AuthModule } from './auth/auth.module';
 import { OrderModule } from './order/order.module';
 import { BrandModule } from './brand/brand.module';
 import { PetModule } from './pet/pet.module';
+import { BadgeModule } from './badge/badge.module';
 
 @Module({
   imports: [
@@ -43,6 +44,9 @@ import { PetModule } from './pet/pet.module';
     BrandModule,
 
     PetModule,
+
+    BadgeModule,
+
   ],
   controllers: [AppController],
   providers: [AppService],

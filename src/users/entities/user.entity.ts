@@ -1,4 +1,5 @@
 import { ValidRoles } from "src/auth/enums/Validate-Roles.enum";
+import { UserBadge } from "src/badge/entities/user-badge.entity";
 import { Order } from "src/order/entities/order.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
@@ -40,4 +41,8 @@ export class User {
 
     @OneToMany(()=>Order,order=>order.user)
     orders:Order[];
+
+    @OneToMany(()=>UserBadge,userBadge=>userBadge.user)
+    userBadge:UserBadge[];
+
 }
