@@ -27,7 +27,7 @@ export class ProductsService {
   async create(createProductDto: CreateProductDto) {
     const product = this.productRepository.create({
       ...createProductDto,
-      category: { id: createProductDto.subCategoryId },
+      subCategory: { id: createProductDto.subCategoryId },
     });
     const savedProduct = await this.productRepository.save(product);
 
@@ -67,6 +67,14 @@ export class ProductsService {
 
   findAll() {
     return `This action returns all products`;
+  }
+
+  async findAllAdmin() {
+    const products = await this.productRepository.find({
+      // relations: ['subCategory', 'subCategory.category'],
+    });
+
+    return products;
   }
 
   async findOne(id: string) {

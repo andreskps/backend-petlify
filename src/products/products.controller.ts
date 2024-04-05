@@ -29,6 +29,12 @@ export class ProductsController {
     return this.productsService.findAll();
   }
 
+  @Get('admin')
+  @Auth(ValidRoles.admin)
+  findAllAdmin() {
+    return this.productsService.findAllAdmin();
+  }
+
   @Get(':id')
   findOne(@Param('id',ParseUUIDPipe) id: string) {
     return this.productsService.findOne(id);

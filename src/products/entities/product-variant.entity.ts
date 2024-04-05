@@ -9,9 +9,7 @@ export class ProductVariant {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({
-    nullable: false
-  })
+  @Column({ type: 'decimal'})
   price: number;
 
   @Column()

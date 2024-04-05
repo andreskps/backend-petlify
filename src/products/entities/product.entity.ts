@@ -39,11 +39,6 @@ export class Product {
   })
   slug: string;
 
-  // @Column('int', {
-  //   default: 0,
-  // })
-  // stock: number;
-
   @Column('boolean', {
     default: true,
   })
@@ -54,11 +49,8 @@ export class Product {
   })
   isPopular: boolean;
 
-  // @ManyToOne(() => User, user => user.products)
-  // user: User;
-
   @ManyToOne(() => Subcategory, (subcategory) => subcategory.products)
-  category: Subcategory;
+  subCategory: Subcategory;
 
   @ManyToOne(() => Brand, (brand) => brand.products)
   brand: Brand;
@@ -66,20 +58,14 @@ export class Product {
   @ManyToOne(() => Pet, (pet) => pet.products)
   pet: Pet;
 
-  @OneToMany(() => Review, review => review.product)
+  @OneToMany(() => Review, (review) => review.product)
   reviews: Review[];
 
   // @OneToMany(() => ProductDiscount, productDiscount => productDiscount.product)
   // productDiscounts: ProductDiscount[];
 
-  // @OneToMany(() => ProductSpecification, productSpecification => productSpecification.product)
-  // productSpecifications: ProductSpecification[];
-
   @OneToMany(() => ProductVariant, (productVariant) => productVariant.product)
   productVariants: ProductVariant[];
-
-  // @OneToMany(() => ProductReview, productReview => productReview.product)
-  // productReviews: ProductReview[];
 
   // @OneToMany(() => ProductTag, productTag => productTag.product)
   // productTags: ProductTag[];

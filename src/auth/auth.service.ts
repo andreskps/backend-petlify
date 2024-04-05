@@ -22,7 +22,7 @@ export class AuthService {
       where: {
         email,
       },
-      select: ['id', 'name', 'email', 'password'],
+      select: ['id', 'name', 'email', 'password','roles'],
     });
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
@@ -40,6 +40,8 @@ export class AuthService {
 
     return {
       access_token,
+      name: user.name,
+      roles: user.roles,
     };
   }
 
