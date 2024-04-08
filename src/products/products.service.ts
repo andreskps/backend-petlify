@@ -82,15 +82,14 @@ export class ProductsService {
       where: {
         id: id,
       },
-      relations: [
-        'productVariants',
-        'productVariants.attributeOptionVariants.option.attribute',
-      ],
+      relations: ['productVariants', 'productVariants.attributeOptionVariants', 'productVariants.attributeOptionVariants.option', 'productVariants.attributeOptionVariants.option.attribute'],
     });
 
     if (!product) {
       throw new NotFoundException(`Product not found`);
     }
+
+ 
 
     const mappedProduct = {
       id: product.id,
@@ -113,8 +112,22 @@ export class ProductsService {
     return mappedProduct;
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+  async update(id: string, updateProductDto: UpdateProductDto) {
+    console.log(updateProductDto);
+    const productUpdate = await this.productRepository.preload({
+      id: id,
+      ...updateProductDto,
+      ...(updateProductDto.subCategoryId ? { subCategory: { id: updateProductDto.subCategoryId } } : {}),
+      
+    });
+
+    if (!productUpdate) {
+      throw new NotFoundException(`Product #${id} not found`);
+    }
+
+    const savedProduct = await this.productRepository.save(productUpdate);
+
+    return savedProduct;
   }
 
   remove(id: number) {

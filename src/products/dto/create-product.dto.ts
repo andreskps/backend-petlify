@@ -5,6 +5,10 @@ import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Valida
 
 class VariantDto {
 
+  @IsOptional()
+  @IsNumber()
+  id: number;
+
   @IsNotEmpty()
   @IsString()
   attribute: string; // Atributo (por ejemplo, 'Peso')
@@ -50,7 +54,7 @@ export class CreateProductDto {
   @IsNumber()
   subCategoryId: number;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => VariantDto)

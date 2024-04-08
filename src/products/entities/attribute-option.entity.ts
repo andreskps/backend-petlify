@@ -1,6 +1,13 @@
 // attributeOption.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { Attribute } from './attribute.entity';
+import { AttributeOptionVariant } from './attributeOptionVariant.entity';
 
 @Entity()
 export class AttributeOption {
@@ -10,7 +17,12 @@ export class AttributeOption {
   @Column()
   value: string;
 
-    @ManyToOne(() => Attribute, attribute => attribute.options)
-    attribute: Attribute;
-    
+  @ManyToOne(() => Attribute, (attribute) => attribute.options)
+  attribute: Attribute;
+
+  @OneToMany(
+    () => AttributeOptionVariant,
+    (attributeOptionVariant) => attributeOptionVariant.option,
+  )
+  attributeOptionVariants: AttributeOptionVariant[];
 }
