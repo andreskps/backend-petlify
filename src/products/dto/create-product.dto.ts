@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, ValidateNested } from 'class-validator';
+import { CreateVariantDto } from './create-variant.dto';
 
 
 
@@ -57,7 +58,7 @@ export class CreateProductDto {
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => VariantDto)
-  variants: VariantDto[];
+  @Type(() => CreateVariantDto)
+  variants: CreateVariantDto[];
 
 }

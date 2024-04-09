@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Attribute } from './attribute.entity';
 import { AttributeOptionVariant } from './attributeOptionVariant.entity';
+import { ProductVariant } from './product-variant.entity';
 
 @Entity()
 export class AttributeOption {
@@ -20,9 +21,12 @@ export class AttributeOption {
   @ManyToOne(() => Attribute, (attribute) => attribute.options)
   attribute: Attribute;
 
-  @OneToMany(
-    () => AttributeOptionVariant,
-    (attributeOptionVariant) => attributeOptionVariant.option,
-  )
-  attributeOptionVariants: AttributeOptionVariant[];
+  // @OneToMany(
+  //   () => AttributeOptionVariant,
+  //   (attributeOptionVariant) => attributeOptionVariant.option,
+  // )
+  // attributeOptionVariants: AttributeOptionVariant[];
+
+  @OneToMany(() => ProductVariant, (productVariant) => productVariant.option)
+  productVariants: ProductVariant[];  
 }

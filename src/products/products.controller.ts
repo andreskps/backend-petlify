@@ -15,6 +15,8 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { ValidRoles } from 'src/auth/enums/validate-roles.enum';
+import { UpdateVariantDto } from './dto/update-variant.dto';
+import { CreateVariantDto } from './dto/create-variant.dto';
 
 @Controller('products')
 export class ProductsController {
@@ -51,5 +53,17 @@ export class ProductsController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.productsService.remove(+id);
+  }
+
+  @Put('variant/:id')
+  @Auth(ValidRoles.admin)
+  updateVariant(@Param('id', ParseIntPipe) id: string, @Body() updateVariantDto: UpdateVariantDto) {
+    return this.productsService.updateVariant(+id, updateVariantDto);
+  }
+
+  @Post('variant/:id')
+  @Auth(ValidRoles.admin)
+  createVariant(@Param('id', ParseUUIDPipe) id: string, @Body() createVariantDto: CreateVariantDto) {
+    return this.productsService.createVariant(id, createVariantDto);
   }
 }
