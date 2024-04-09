@@ -134,8 +134,21 @@ export class ProductsService {
     return savedProduct;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  async remove(id: string) {
+    const product = await this.productRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!product) {
+      throw new NotFoundException(`Product not found`);
+    }
+
+    product.isActive = false;
+
+    await this.productRepository.save(product);
+
   }
 
   async createVariant(productId: string, createVariantDto: CreateVariantDto) {
