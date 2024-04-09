@@ -83,6 +83,7 @@ export class ProductsService {
       },
       relations: [
         'subCategory',
+        'subCategory.category',
         'productVariants',
         'productVariants.option',
         'productVariants.option.attribute',
@@ -96,6 +97,7 @@ export class ProductsService {
     const mappedProduct = {
       id: product.id,
       title: product.title,
+      categoryId: product.subCategory.category.id,
       subCategoryId: product.subCategory.id,
 
       description: product.description,
@@ -104,7 +106,7 @@ export class ProductsService {
       isPopular: product.isPopular,
       variants: product.productVariants.map((variant) => ({
         id: variant.id,
-        price: variant.price,
+        price: +variant.price,
         stock: variant.stock,
         attribute: variant.option.attribute.name,
         value: variant.option.value,
