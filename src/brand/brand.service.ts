@@ -49,7 +49,16 @@ export class BrandService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} brand`;
+  async remove(id: number) {
+    const brand = await this.brandRepository.findOne({
+      where: { id },
+    });
+    if (!brand) {
+      throw new NotFoundException(`Brand #${id} not found`);
+    }
+
+    brand.isActive = false;
+
+    return await this.brandRepository.save(brand);
   }
 }
