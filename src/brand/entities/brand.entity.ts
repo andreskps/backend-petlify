@@ -10,10 +10,14 @@ export class Brand {
     @Column('text')
     name: string;
 
-    @Column('text') 
+    @Column('text',{
+        nullable: true
+    }) 
     logo: string;
 
-    @Column('text')
+    @Column('text',{
+        nullable: true
+    })
     description: string;
 
     @OneToMany(() => Product, product => product.brand)

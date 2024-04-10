@@ -1,11 +1,27 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateBrandDto } from './dto/create-brand.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Brand } from './entities/brand.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class BrandService {
-  create(createBrandDto: CreateBrandDto) {
-    return 'This action adds a new brand';
+  constructor(
+    @InjectRepository(Brand)
+    private brandRepository: Repository<Brand>,
+  ) {}
+
+  async create(createBrandDto: CreateBrandDto) {
+    try{
+      const newBrand = this.brandRepository.create(createBrandDto);
+      return await this.brandRepository.save(newBrand);
+    }catch(error){
+
+      throw new InternalServerErrorException(error);
+
+    }
+ 
   }
 
   findAll() {

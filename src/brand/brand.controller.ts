@@ -2,12 +2,18 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { BrandService } from './brand.service';
 import { CreateBrandDto } from './dto/create-brand.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
+import { Auth } from 'src/auth/decorators/auth.decorator';
+import { ValidRoles } from 'src/auth/enums/Validate-Roles.enum';
 
 @Controller('brand')
 export class BrandController {
   constructor(private readonly brandService: BrandService) {}
 
+
+
+  
   @Post()
+  @Auth(ValidRoles.admin)
   create(@Body() createBrandDto: CreateBrandDto) {
     return this.brandService.create(createBrandDto);
   }
