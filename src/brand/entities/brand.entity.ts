@@ -20,6 +20,11 @@ export class Brand {
     })
     description: string;
 
+    @Column('boolean',{
+        default: true
+    })
+    isActive: boolean;
+
     @OneToMany(() => Product, product => product.brand)
     products: Product[];
 

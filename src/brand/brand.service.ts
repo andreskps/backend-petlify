@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateBrandDto } from './dto/create-brand.dto';
 import { UpdateBrandDto } from './dto/update-brand.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,15 +17,12 @@ export class BrandService {
   ) {}
 
   async create(createBrandDto: CreateBrandDto) {
-    try{
+    try {
       const newBrand = this.brandRepository.create(createBrandDto);
       return await this.brandRepository.save(newBrand);
-    }catch(error){
-
-      throw new InternalServerErrorException(error);
-
+    } catch (error) {
+      throw new InternalServerErrorException('Error creating brand');
     }
- 
   }
 
   findAll() {
@@ -32,8 +33,20 @@ export class BrandService {
     return `This action returns a #${id} brand`;
   }
 
-  update(id: number, updateBrandDto: UpdateBrandDto) {
-    return `This action updates a #${id} brand`;
+  async update(id: number, updateBrandDto: UpdateBrandDto) {
+    const brand = await this.brandRepository.preload({
+      id: id,
+      ...updateBrandDto,
+    });
+    if (!brand) {
+      throw new NotFoundException(`Brand #${id} not found`);
+    }
+
+    try {
+      return await this.brandRepository.save(brand);
+    } catch (error) {
+      throw new InternalServerErrorException('Error updating brand');
+    }
   }
 
   remove(id: number) {
