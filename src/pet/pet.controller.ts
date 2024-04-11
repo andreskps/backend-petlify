@@ -1,13 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Put } from '@nestjs/common';
 import { PetService } from './pet.service';
 import { CreatePetDto } from './dto/create-pet.dto';
 import { UpdatePetDto } from './dto/update-pet.dto';
+import { Auth } from 'src/auth/decorators/auth.decorator';
+import { ValidRoles } from 'src/auth/enums/Validate-Roles.enum';
 
-@Controller('pet')
+@Controller('pets')
 export class PetController {
   constructor(private readonly petService: PetService) {}
 
   @Post()
+  @Auth(ValidRoles.admin)
   create(@Body() createPetDto: CreatePetDto) {
     return this.petService.create(createPetDto);
   }
@@ -18,17 +21,19 @@ export class PetController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id',ParseIntPipe) id: string) {
     return this.petService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePetDto: UpdatePetDto) {
+  @Put(':id')
+  @Auth(ValidRoles.admin)
+  update(@Param('id',ParseIntPipe) id: string, @Body() updatePetDto: UpdatePetDto) {
     return this.petService.update(+id, updatePetDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  @Auth(ValidRoles.admin)
+  remove(@Param('id',ParseIntPipe) id: string) {
     return this.petService.remove(+id);
   }
 }

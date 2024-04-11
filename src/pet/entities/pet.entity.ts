@@ -10,6 +10,11 @@ export class Pet {
     @Column('text')
     name: string;
 
+    @Column('boolean',{
+        default:true
+    })
+    isActive:boolean;
+
     @OneToMany(() => Product, product => product.pet)
     products: Product[]
 }

@@ -5,7 +5,7 @@ import { UpdateBrandDto } from './dto/update-brand.dto';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { ValidRoles } from 'src/auth/enums/Validate-Roles.enum';
 
-@Controller('brand')
+@Controller('brands')
 export class BrandController {
   constructor(private readonly brandService: BrandService) {}
 
@@ -24,7 +24,7 @@ export class BrandController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id',ParseIntPipe) id: string) {
     return this.brandService.findOne(+id);
   }
 
