@@ -12,6 +12,7 @@ import { BrandModule } from './brand/brand.module';
 import { PetModule } from './pet/pet.module';
 import { BadgeModule } from './badge/badge.module';
 import { ReviewModule } from './review/review.module';
+import { SubcategoriesModule } from './subcategories/subcategories.module';
 
 @Module({
   imports: [
@@ -49,6 +50,8 @@ import { ReviewModule } from './review/review.module';
     BadgeModule,
 
     ReviewModule,
+
+    SubcategoriesModule,
 
   ],
   controllers: [AppController],

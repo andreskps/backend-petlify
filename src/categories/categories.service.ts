@@ -1,40 +1,78 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from './entities/category.entity';
 import { Repository } from 'typeorm';
+import { Subcategory } from 'src/subcategories/entities/subcategory.entity';
 
 @Injectable()
 export class CategoriesService {
-
   constructor(
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
-  ) {
-    
-  }
+    @InjectRepository(Subcategory)
+    private readonly subcategoryRepository: Repository<Subcategory>,
+  ) {}
 
+  async create(createCategoryDto: CreateCategoryDto) {
+    try {
+      const category = this.categoryRepository.create({
+        name: createCategoryDto.name,
+      });
 
-  create(createCategoryDto: CreateCategoryDto) {
-    return 'This action adds a new category';
+      const savedCategory = await this.categoryRepository.save(category);
+
+      const subcategories = createCategoryDto.subcategories.map((subcategory) =>
+        this.subcategoryRepository.create({
+          name: subcategory.name,
+          category: savedCategory,
+        }),
+      );
+
+      await Promise.all(
+        subcategories.map((subcategory) =>
+          this.subcategoryRepository.save(subcategory),
+        ),
+      );
+
+      return savedCategory;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Error creating category and subcategories',
+      );
+    }
   }
 
   async findAll() {
-      const categories = await this.categoryRepository.find({
-        relations: ['subcategories'],
+    const categories = await this.categoryRepository.find({
+      relations: ['subcategories'],
+    });
 
-      });
-
-      return categories;
+    return categories;
   }
 
   findOne(id: number) {
     return `This action returns a #${id} category`;
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
+  async update(id: number, updateCategoryDto: UpdateCategoryDto) {
+    const category = await this.categoryRepository.preload({
+      id: id,
+      ...updateCategoryDto,
+    });
+
+    if (!category) {
+      throw new NotFoundException('Category not found');
+    }
+
+    const updatedCategory = await this.categoryRepository.save(category);
+
+    return updatedCategory;
   }
 
   remove(id: number) {
