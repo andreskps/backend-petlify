@@ -1,7 +1,6 @@
 // variant.entity.ts
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
 import { Product } from '../../products/entities/product.entity';
-import { AttributeOptionVariant } from '../../products/entities/attributeOptionVariant.entity';
 import { OrderItem } from 'src/order/entities/orderItem.entity';
 import { AttributeOption } from '../../products/entities/attribute-option.entity';
 
@@ -19,8 +18,11 @@ export class ProductVariant {
   @ManyToOne(() => Product, product => product.productVariants)
   product: Product;
 
-  // @OneToMany(() => AttributeOptionVariant, attributeOptionVariant => attributeOptionVariant.variant)
-  // attributeOptionVariants: AttributeOptionVariant[];
+
+  @Column('boolean',{
+    default: true,
+  })
+  isActive: boolean;
   
   @ManyToOne(() => AttributeOption, attributeOption => attributeOption.productVariants)
   option: AttributeOption;

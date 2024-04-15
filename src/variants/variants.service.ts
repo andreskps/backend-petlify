@@ -10,9 +10,7 @@ import { AttributeOption } from 'src/products/entities/attribute-option.entity';
 
 @Injectable()
 export class VariantsService {
-
   constructor(
-    
     @InjectRepository(ProductVariant)
     private readonly productVariantRepository: Repository<ProductVariant>,
     @InjectRepository(Product)
@@ -21,11 +19,7 @@ export class VariantsService {
     private readonly attributeRepository: Repository<Attribute>,
     @InjectRepository(AttributeOption)
     private readonly attributeOptionRepository: Repository<AttributeOption>,
-
-  ) {
-     
-  }
-
+  ) {}
 
   async createVariant(createVariantDto: CreateVariantDto) {
     const product = await this.productRepository.findOne({
@@ -123,7 +117,19 @@ export class VariantsService {
     return variant;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} variant`;
+  async remove(id: number) {
+    const variant = await this.productVariantRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!variant) {
+      throw new NotFoundException(`Variant not found`);
+    }
+
+    variant.isActive = false;
+
+    await this.productVariantRepository.save(variant);
   }
 }

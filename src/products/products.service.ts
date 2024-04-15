@@ -9,7 +9,6 @@ import { Attribute } from './entities/attribute.entity';
 import { AttributeOption } from './entities/attribute-option.entity';
 import { AttributeOptionVariant } from './entities/attributeOptionVariant.entity';
 
-
 @Injectable()
 export class ProductsService {
   constructor(
@@ -82,20 +81,22 @@ export class ProductsService {
   }
 
   async findOne(id: string) {
-    const product = await this.productRepository.findOne({
-      where: {
-        id: id,
-      },
-      relations: [
-        'subCategory',
-        'subCategory.category',
+    const product = await this.productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.subCategory', 'subCategory')
+      .leftJoinAndSelect('subCategory.category', 'category')
+      .leftJoinAndSelect('product.brand', 'brand')
+      .leftJoinAndSelect('product.pet', 'pet')
+      .leftJoinAndSelect(
+        'product.productVariants',
         'productVariants',
-        'productVariants.option',
-        'productVariants.option.attribute',
-        'brand',
-        'pet',
-      ],
-    });
+        'productVariants.isActive = :isActive',
+        { isActive: true },
+      )
+      .leftJoinAndSelect('productVariants.option', 'option')
+      .leftJoinAndSelect('option.attribute', 'attribute')
+      .where('product.id = :id', { id })
+      .getOne();
 
     if (!product) {
       throw new NotFoundException(`Product not found`);
@@ -123,7 +124,6 @@ export class ProductsService {
     if (product.brand) {
       mappedProduct['brandId'] = product.brand.id;
     }
-
 
     return mappedProduct;
   }
@@ -167,8 +167,4 @@ export class ProductsService {
 
     await this.productRepository.save(product);
   }
-
- 
-
-
 }

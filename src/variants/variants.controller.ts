@@ -21,8 +21,10 @@ export class VariantsController {
     return this.variantsService.updateVariant(+id, updateVariantDto);
   }
 
+
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  @Auth(ValidRoles.admin)
+  remove(@Param('id',ParseIntPipe) id: string) {
     return this.variantsService.remove(+id);
   }
 }
