@@ -13,6 +13,7 @@ import { PetModule } from './pet/pet.module';
 import { BadgeModule } from './badge/badge.module';
 import { ReviewModule } from './review/review.module';
 import { SubcategoriesModule } from './subcategories/subcategories.module';
+import { VariantsModule } from './variants/variants.module';
 
 @Module({
   imports: [
@@ -52,6 +53,8 @@ import { SubcategoriesModule } from './subcategories/subcategories.module';
     ReviewModule,
 
     SubcategoriesModule,
+
+    VariantsModule,
 
   ],
   controllers: [AppController],

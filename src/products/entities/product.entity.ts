@@ -8,7 +8,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { ProductVariant } from './product-variant.entity';
+import { ProductVariant } from '../../variants/entities/product-variant.entity';
 import { Brand } from 'src/brand/entities/brand.entity';
 import { Pet } from 'src/pet/entities/pet.entity';
 import { Review } from 'src/review/entities/review.entity';

@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { Attribute } from './attribute.entity';
 import { AttributeOptionVariant } from './attributeOptionVariant.entity';
-import { ProductVariant } from './product-variant.entity';
+import { ProductVariant } from '../../variants/entities/product-variant.entity';
 
 @Entity()
 export class AttributeOption {

@@ -56,15 +56,15 @@ export class ProductsController {
     return this.productsService.remove(id);
   }
 
-  @Put('variant/:id')
-  @Auth(ValidRoles.admin)
-  updateVariant(@Param('id', ParseIntPipe) id: string, @Body() updateVariantDto: UpdateVariantDto) {
-    return this.productsService.updateVariant(+id, updateVariantDto);
-  }
+  // @Put('variant/:id')
+  // @Auth(ValidRoles.admin)
+  // updateVariant(@Param('id', ParseIntPipe) id: string, @Body() updateVariantDto: UpdateVariantDto) {
+  //   return this.productsService.updateVariant(+id, updateVariantDto);
+  // }
 
-  @Post('variant/:id')
-  @Auth(ValidRoles.admin)
-  createVariant(@Param('id', ParseUUIDPipe) id: string, @Body() createVariantDto: CreateVariantDto) {
-    return this.productsService.createVariant(id, createVariantDto);
-  }
+  // @Post('variant/:id')
+  // @Auth(ValidRoles.admin)
+  // createVariant(@Param('id', ParseUUIDPipe) id: string, @Body() createVariantDto: CreateVariantDto) {
+  //   return this.productsService.createVariant(id, createVariantDto);
+  // }
 }

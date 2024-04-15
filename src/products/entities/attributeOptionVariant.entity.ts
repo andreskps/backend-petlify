@@ -1,6 +1,6 @@
 // attributeOptionSku.entity.ts
 import { Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { ProductVariant } from './product-variant.entity';
+import { ProductVariant } from '../../variants/entities/product-variant.entity';
 import { AttributeOption } from './attribute-option.entity';
 
 @Entity()

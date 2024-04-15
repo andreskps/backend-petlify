@@ -4,12 +4,11 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ProductVariant } from './entities/product-variant.entity';
+import { ProductVariant } from '../variants/entities/product-variant.entity';
 import { Attribute } from './entities/attribute.entity';
 import { AttributeOption } from './entities/attribute-option.entity';
 import { AttributeOptionVariant } from './entities/attributeOptionVariant.entity';
-import { UpdateVariantDto } from './dto/update-variant.dto';
-import { CreateVariantDto } from './dto/create-variant.dto';
+
 
 @Injectable()
 export class ProductsService {
@@ -169,91 +168,7 @@ export class ProductsService {
     await this.productRepository.save(product);
   }
 
-  async createVariant(productId: string, createVariantDto: CreateVariantDto) {
-    const product = await this.productRepository.findOne({
-      where: {
-        id: productId,
-      },
-    });
+ 
 
-    if (!product) {
-      throw new NotFoundException(`Product not found`);
-    }
 
-    let attribute = await this.attributeRepository.findOne({
-      where: { name: createVariantDto.attribute },
-    });
-    if (!attribute) {
-      attribute = await this.attributeRepository.save({
-        name: createVariantDto.attribute,
-      });
-    }
-
-    let option = await this.attributeOptionRepository.findOne({
-      where: { value: createVariantDto.value, attribute: attribute },
-    });
-    if (!option) {
-      option = await this.attributeOptionRepository.save({
-        value: createVariantDto.value,
-        attribute: attribute,
-      });
-    }
-
-    const productVariant = await this.productVariantRepository.save({
-      price: createVariantDto.price,
-      stock: createVariantDto.stock,
-      product: product,
-      option: option,
-    });
-
-    return productVariant;
-  }
-
-  async updateVariant(id: number, updateVariantDto: UpdateVariantDto) {
-    const variant = await this.productVariantRepository.findOne({
-      where: {
-        id: id,
-      },
-      relations: ['option', 'option.attribute'],
-    });
-
-    if (!variant) {
-      throw new NotFoundException(`Variant not found`);
-    }
-
-    let attribute;
-    if (updateVariantDto.attribute) {
-      attribute = await this.attributeRepository.findOne({
-        where: { name: updateVariantDto.attribute },
-      });
-      if (!attribute) {
-        attribute = await this.attributeRepository.save({
-          name: updateVariantDto.attribute,
-        });
-      }
-    }
-
-    let option;
-    if (updateVariantDto.value) {
-      option = await this.attributeOptionRepository.findOne({
-        where: { value: updateVariantDto.value, attribute: attribute },
-      });
-      if (!option) {
-        option = await this.attributeOptionRepository.save({
-          value: updateVariantDto.value,
-          attribute: attribute,
-        });
-      }
-    }
-
-    // const attributeOptionVariant = variant.attributeOptionVariants.find(aov => aov.option.attribute.id === attribute.id);
-
-    variant.price = updateVariantDto.price;
-    variant.stock = updateVariantDto.stock;
-    variant.option = option;
-
-    await this.productVariantRepository.save(variant);
-
-    return variant;
-  }
 }

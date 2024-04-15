@@ -1,9 +1,9 @@
 // variant.entity.ts
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
-import { Product } from './product.entity';
-import { AttributeOptionVariant } from './attributeOptionVariant.entity';
+import { Product } from '../../products/entities/product.entity';
+import { AttributeOptionVariant } from '../../products/entities/attributeOptionVariant.entity';
 import { OrderItem } from 'src/order/entities/orderItem.entity';
-import { AttributeOption } from './attribute-option.entity';
+import { AttributeOption } from '../../products/entities/attribute-option.entity';
 
 @Entity()
 export class ProductVariant {
