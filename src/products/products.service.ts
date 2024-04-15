@@ -30,6 +30,12 @@ export class ProductsService {
     const product = this.productRepository.create({
       ...createProductDto,
       subCategory: { id: createProductDto.subCategoryId },
+      ...(createProductDto.brandId
+        ? { brand: { id: createProductDto.brandId } }
+        : {}),
+      ...(createProductDto.petId
+        ? { pet: { id: createProductDto.petId } }
+        : {}),
     });
     const savedProduct = await this.productRepository.save(product);
 
@@ -87,6 +93,8 @@ export class ProductsService {
         'productVariants',
         'productVariants.option',
         'productVariants.option.attribute',
+        'brand',
+        'pet',
       ],
     });
 
@@ -99,7 +107,8 @@ export class ProductsService {
       title: product.title,
       categoryId: product.subCategory.category.id,
       subCategoryId: product.subCategory.id,
-
+      brandId: product.brand ? product.brand.id : null,
+      petId: product.pet ? product.pet.id : null,
       description: product.description,
       slug: product.slug,
       isActive: product.isActive,
@@ -122,6 +131,12 @@ export class ProductsService {
       ...updateProductDto,
       ...(updateProductDto.subCategoryId
         ? { subCategory: { id: updateProductDto.subCategoryId } }
+        : {}),
+      ...(updateProductDto.brandId
+        ? { brand: { id: updateProductDto.brandId } }
+        : {}),
+      ...(updateProductDto.petId
+        ? { pet: { id: updateProductDto.petId } }
         : {}),
     });
 
@@ -148,7 +163,6 @@ export class ProductsService {
     product.isActive = false;
 
     await this.productRepository.save(product);
-
   }
 
   async createVariant(productId: string, createVariantDto: CreateVariantDto) {

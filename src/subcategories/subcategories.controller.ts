@@ -32,7 +32,8 @@ export class SubcategoriesController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  @Auth(ValidRoles.admin)
+  remove(@Param('id',ParseIntPipe) id: string) {
     return this.subcategoriesService.remove(+id);
   }
 }

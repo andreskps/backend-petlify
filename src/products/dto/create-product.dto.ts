@@ -55,6 +55,17 @@ export class CreateProductDto {
   @IsNumber()
   subCategoryId: number;
 
+  @IsNumber()
+  @IsOptional()
+  petId: number;
+
+
+  @IsNumber()
+  @IsOptional()
+  brandId: number;
+
+
+
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })

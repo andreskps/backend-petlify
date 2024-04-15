@@ -67,7 +67,21 @@ export class SubcategoriesService {
     
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} subcategory`;
+  async remove(id: number) {
+     const subcategory = await this.subcategoryRepository.findOne({
+      where: {
+        id: id,
+      },
+     });
+
+    if (!subcategory) {
+      throw new NotFoundException(`Subcategory with ID ${id} not found`);
+    }
+
+
+    await this.subcategoryRepository.remove(subcategory);
+
+    
+
   }
 }

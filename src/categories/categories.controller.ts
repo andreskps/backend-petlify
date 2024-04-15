@@ -19,6 +19,11 @@ export class CategoriesController {
     return this.categoriesService.update(+id, updateCategoryDto);
   }
 
+  @Get(':id')
+  findOne(@Param('id',ParseIntPipe) id: string) {
+    return this.categoriesService.findOne(+id);
+  }
+
 
   @Get()
   findAll() {

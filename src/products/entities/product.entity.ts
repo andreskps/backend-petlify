@@ -49,7 +49,9 @@ export class Product {
   })
   isPopular: boolean;
 
-  @ManyToOne(() => Subcategory, (subcategory) => subcategory.products)
+  @ManyToOne(() => Subcategory, (subcategory) => subcategory.products,{
+    onDelete: 'SET NULL',
+  })
   subCategory: Subcategory;
 
   @ManyToOne(() => Brand, (brand) => brand.products)
