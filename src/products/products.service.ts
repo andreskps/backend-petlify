@@ -107,7 +107,6 @@ export class ProductsService {
       title: product.title,
       categoryId: product.subCategory.category.id,
       subCategoryId: product.subCategory.id,
-      brandId: product.brand ? product.brand.id : null,
       petId: product.pet ? product.pet.id : null,
       description: product.description,
       slug: product.slug,
@@ -121,6 +120,11 @@ export class ProductsService {
         value: variant.option.value,
       })),
     };
+
+    if (product.brand) {
+      mappedProduct['brandId'] = product.brand.id;
+    }
+
 
     return mappedProduct;
   }

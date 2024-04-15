@@ -9,6 +9,9 @@ export class Category {
   @Column('text')
   name: string;
 
-  @OneToMany(() => Subcategory, (subcategory) => subcategory.category)
+  
+  @OneToMany(() => Subcategory, (subcategory) => subcategory.category,{
+    onDelete: 'CASCADE',
+  })
   subcategories: Subcategory[];
 }

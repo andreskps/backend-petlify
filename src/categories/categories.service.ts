@@ -84,7 +84,15 @@ export class CategoriesService {
     return updatedCategory;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  async remove(id: number) {
+    const category = await this.categoryRepository.findOne({
+      where: { id },
+    });
+
+    if (!category) {
+      throw new NotFoundException('Category not found');
+    }
+
+    await this.categoryRepository.remove(category);
   }
 }
