@@ -14,6 +14,7 @@ import { BadgeModule } from './badge/badge.module';
 import { ReviewModule } from './review/review.module';
 import { SubcategoriesModule } from './subcategories/subcategories.module';
 import { VariantsModule } from './variants/variants.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -55,6 +56,8 @@ import { VariantsModule } from './variants/variants.module';
     SubcategoriesModule,
 
     VariantsModule,
+
+    CloudinaryModule,
 
   ],
   controllers: [AppController],
