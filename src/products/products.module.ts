@@ -8,12 +8,14 @@ import { Attribute } from './entities/attribute.entity';
 import { AttributeOption } from './entities/attribute-option.entity';
 import { AttributeOptionVariant } from './entities/attributeOptionVariant.entity';
 import { VariantsModule } from 'src/variants/variants.module';
+import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Product,Attribute,AttributeOption,AttributeOptionVariant]),
     AuthModule,
     forwardRef(() => VariantsModule),
+    CloudinaryModule
   ],
   controllers: [ProductsController],
   providers: [ProductsService],

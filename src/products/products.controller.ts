@@ -9,12 +9,18 @@ import {
   ParseUUIDPipe,
   Put,
   ParseIntPipe,
+  UseInterceptors,
+  UploadedFile,
+  UploadedFiles,
+  BadRequestException,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { ValidRoles } from 'src/auth/enums/validate-roles.enum';
+import { FilesInterceptor } from '@nestjs/platform-express';
+import { fileFilter } from '../common/utils/fileFilter';
 
 
 @Controller('products')
@@ -53,6 +59,21 @@ export class ProductsController {
   @Auth(ValidRoles.admin)
   remove(@Param('id',ParseUUIDPipe) id: string) {
     return this.productsService.remove(id);
+  }
+
+  @Post('upload')
+  @Auth(ValidRoles.admin)
+  @UseInterceptors(
+    FilesInterceptor('files', 10, {
+      fileFilter,
+    }),
+  )
+  uploadImages(@UploadedFiles() files: Express.Multer.File[]) {
+     
+    if (!files || !files.length) {
+      throw new BadRequestException('No files uploaded');
+    }
+    return this.productsService.uploadImages(files);
   }
 
 }

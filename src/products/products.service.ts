@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
@@ -8,6 +8,7 @@ import { ProductVariant } from '../variants/entities/product-variant.entity';
 import { Attribute } from './entities/attribute.entity';
 import { AttributeOption } from './entities/attribute-option.entity';
 import { AttributeOptionVariant } from './entities/attributeOptionVariant.entity';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Injectable()
 export class ProductsService {
@@ -20,8 +21,10 @@ export class ProductsService {
     private readonly attributeRepository: Repository<Attribute>,
     @InjectRepository(AttributeOption)
     private readonly attributeOptionRepository: Repository<AttributeOption>,
-    @InjectRepository(AttributeOptionVariant)
-    private readonly attributeOptionVariantRepository: Repository<AttributeOptionVariant>,
+
+    private readonly cloudinaryService: CloudinaryService,
+
+
   ) {}
 
   async create(createProductDto: CreateProductDto) {
@@ -166,5 +169,14 @@ export class ProductsService {
     product.isActive = false;
 
     await this.productRepository.save(product);
+  }
+
+  async uploadImages(files: Express.Multer.File[]) {
+      try {
+          const response = await this.cloudinaryService.uploadFiles(files,"products");
+          return response.map((file) => file.url);
+      } catch (error) {
+         throw new InternalServerErrorException(error.message);
+      } 
   }
 }
