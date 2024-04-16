@@ -72,4 +72,11 @@ export class CreateProductDto {
   @Type(() => CreateVariantDto)
   variants: CreateVariantDto[];
 
+
+  @IsArray()
+  @IsString({ each: true })
+  images: string[];
+
+
+
 }

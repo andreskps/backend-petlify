@@ -9,10 +9,11 @@ import { AttributeOption } from './entities/attribute-option.entity';
 import { AttributeOptionVariant } from './entities/attributeOptionVariant.entity';
 import { VariantsModule } from 'src/variants/variants.module';
 import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
+import { ProductImage } from './entities/ProductImage';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Product,Attribute,AttributeOption,AttributeOptionVariant]),
+    TypeOrmModule.forFeature([Product,Attribute,AttributeOption,AttributeOptionVariant,ProductImage]),
     AuthModule,
     forwardRef(() => VariantsModule),
     CloudinaryModule

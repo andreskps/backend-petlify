@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
@@ -9,6 +13,7 @@ import { Attribute } from './entities/attribute.entity';
 import { AttributeOption } from './entities/attribute-option.entity';
 import { AttributeOptionVariant } from './entities/attributeOptionVariant.entity';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
+import { ProductImage } from './entities/ProductImage';
 
 @Injectable()
 export class ProductsService {
@@ -21,10 +26,10 @@ export class ProductsService {
     private readonly attributeRepository: Repository<Attribute>,
     @InjectRepository(AttributeOption)
     private readonly attributeOptionRepository: Repository<AttributeOption>,
+    @InjectRepository(ProductImage)
+    private readonly productImageRepository: Repository<ProductImage>,
 
     private readonly cloudinaryService: CloudinaryService,
-
-
   ) {}
 
   async create(createProductDto: CreateProductDto) {
@@ -39,6 +44,10 @@ export class ProductsService {
         : {}),
     });
     const savedProduct = await this.productRepository.save(product);
+
+    if (createProductDto.images) {
+      await this.saveImages(createProductDto.images, savedProduct);
+    }
 
     for (const variant of createProductDto.variants) {
       let attribute = await this.attributeRepository.findOne({
@@ -172,11 +181,25 @@ export class ProductsService {
   }
 
   async uploadImages(files: Express.Multer.File[]) {
-      try {
-          const response = await this.cloudinaryService.uploadFiles(files,"products");
-          return response.map((file) => file.url);
-      } catch (error) {
-         throw new InternalServerErrorException(error.message);
-      } 
+    try {
+      const response = await this.cloudinaryService.uploadFiles(
+        files,
+        'products',
+      );
+      return response.map((file) => file.url);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  private async saveImages(images: string[], product: Product) {
+    for (const url of images) {
+      const productImage = this.productImageRepository.create({
+        url,
+        product,
+      });
+
+      await this.productImageRepository.save(productImage);
+    }
   }
 }

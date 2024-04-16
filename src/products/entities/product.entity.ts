@@ -12,6 +12,7 @@ import { ProductVariant } from '../../variants/entities/product-variant.entity';
 import { Brand } from 'src/brand/entities/brand.entity';
 import { Pet } from 'src/pet/entities/pet.entity';
 import { Review } from 'src/review/entities/review.entity';
+import { ProductImage } from './ProductImage';
 
 @Entity()
 export class Product {
@@ -63,17 +64,15 @@ export class Product {
   @OneToMany(() => Review, (review) => review.product)
   reviews: Review[];
 
-  // @OneToMany(() => ProductDiscount, productDiscount => productDiscount.product)
-  // productDiscounts: ProductDiscount[];
+
 
   @OneToMany(() => ProductVariant, (productVariant) => productVariant.product)
   productVariants: ProductVariant[];
 
-  // @OneToMany(() => ProductTag, productTag => productTag.product)
-  // productTags: ProductTag[];
 
-  // @OneToMany(() => ProductImage, productImage => productImage.product)
-  // productImages: ProductImage[];
+
+  @OneToMany(() => ProductImage, productImage => productImage.product)
+  productImages: ProductImage[];
 
   @BeforeInsert()
   checkSlugInsert() {
