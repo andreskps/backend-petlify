@@ -14,6 +14,7 @@ import { AttributeOption } from './entities/attribute-option.entity';
 import { AttributeOptionVariant } from './entities/attributeOptionVariant.entity';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { ProductImage } from './entities/ProductImage';
+import { QueryProductDto } from './dto/queries..dto';
 
 @Injectable()
 export class ProductsService {
@@ -80,8 +81,46 @@ export class ProductsService {
     return savedProduct;
   }
 
-  findAll() {
-    return `This action returns all products`;
+  findAll(query: QueryProductDto) {
+    const { filter, brand, subcategory } = query;
+
+    console.log(query);
+    let queryBuilder = this.productRepository
+      .createQueryBuilder('product')
+      .where('product.isActive = :isActive', { isActive: true });
+    // .leftJoinAndSelect('product.subCategory', 'subCategory')
+    // .leftJoinAndSelect('subCategory.category', 'category');
+
+    if (subcategory) {
+      queryBuilder = queryBuilder
+        .leftJoin('product.subCategory', 'subCategory')
+        .andWhere('subCategory.name = :subCategoryName', {
+          subCategoryName: subcategory,
+        });
+    }
+
+    if (brand) {
+      queryBuilder = queryBuilder
+        .leftJoin('product.brand', 'brand')
+        .andWhere('brand.name = :brandName', { brandName: brand });
+    }
+
+    if (filter) {
+      if (filter === 'isPopular') {
+        queryBuilder = queryBuilder.andWhere('product.isPopular = :isPopular', {
+          isPopular: true,
+        });
+      } else if (filter === 'IsNew') {
+        // Aquí puedes agregar la lógica para filtrar por 'IsNew'
+      } else if (filter === 'All') {
+        
+        // Aquí puedes agregar la lógica para filtrar por 'All'
+      }
+    }
+
+    const products = queryBuilder.getMany();
+
+    return products;
   }
 
   async findAllAdmin() {
@@ -97,6 +136,7 @@ export class ProductsService {
       .createQueryBuilder('product')
       .leftJoinAndSelect('product.subCategory', 'subCategory')
       .leftJoinAndSelect('subCategory.category', 'category')
+      .leftJoinAndSelect('product.productImages', 'productImages')
       .leftJoinAndSelect('product.brand', 'brand')
       .leftJoinAndSelect('product.pet', 'pet')
       .leftJoinAndSelect(
@@ -131,6 +171,7 @@ export class ProductsService {
         attribute: variant.option.attribute.name,
         value: variant.option.value,
       })),
+      images: product.productImages,
     };
 
     if (product.brand) {
@@ -161,6 +202,10 @@ export class ProductsService {
 
     const savedProduct = await this.productRepository.save(productUpdate);
 
+    if (updateProductDto.images) {
+      await this.saveImages(updateProductDto.images, savedProduct);
+    }
+
     return savedProduct;
   }
 
@@ -180,6 +225,140 @@ export class ProductsService {
     await this.productRepository.save(product);
   }
 
+  async findOneBySlug(slug: string) {
+    const product = await this.productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.subCategory', 'subCategory')
+      .leftJoinAndSelect('subCategory.category', 'category')
+      .leftJoinAndSelect('product.productImages', 'productImages')
+      .leftJoinAndSelect('product.brand', 'brand')
+      .leftJoinAndSelect('product.pet', 'pet')
+      .leftJoinAndSelect(
+        'product.productVariants',
+        'productVariants',
+        'productVariants.isActive = :isActive',
+        { isActive: true },
+      )
+      .leftJoinAndSelect('productVariants.option', 'option')
+      .leftJoinAndSelect('option.attribute', 'attribute')
+      .where('product.slug = :slug', { slug })
+      .getOne();
+
+    if (!product) {
+      throw new NotFoundException(`Product not found`);
+    }
+
+    const mappedProduct = {
+      id: product.id,
+      title: product.title,
+      categoryId: product.subCategory.category.id,
+      subCategoryId: product.subCategory.id,
+      petId: product.pet ? product.pet.id : null,
+      description: product.description,
+      slug: product.slug,
+      isActive: product.isActive,
+      isPopular: product.isPopular,
+      variants: product.productVariants.map((variant) => ({
+        id: variant.id,
+        price: +variant.price,
+        stock: variant.stock,
+        attribute: variant.option.attribute.name,
+        value: variant.option.value,
+      })),
+      images: product.productImages,
+    };
+
+    if (product.brand) {
+      mappedProduct['brandId'] = product.brand.id;
+    }
+
+    return mappedProduct;
+  }
+
+  async findAllByPet(pet: string, query: QueryProductDto) {
+    const { filter, brand, subcategory } = query;
+
+    console.log(brand);
+    let queryBuilder = this.productRepository
+      .createQueryBuilder('product')
+      .where('product.isActive = :isActive', { isActive: true })
+      .leftJoinAndSelect('product.productImages', 'productImages')
+      .leftJoin('product.pet', 'pet')
+      .andWhere('pet.name = :petName', { petName: pet });
+
+    if (subcategory) {
+      queryBuilder = queryBuilder
+        .leftJoin('product.subCategory', 'subCategory')
+        .andWhere('subCategory.name = :subCategoryName', {
+          subCategoryName: subcategory,
+        });
+    }
+
+    if (brand) {
+      queryBuilder = queryBuilder
+        .leftJoin('product.brand', 'brand')
+        .andWhere('brand.name = :brandName', { brandName: brand });
+    }
+
+    if (filter) {
+      if (filter === 'isPopular') {
+        queryBuilder = queryBuilder.andWhere('product.isPopular = :isPopular', {
+          isPopular: true,
+        });
+      } else if (filter === 'IsNew') {
+        // Aquí puedes agregar la lógica para filtrar por 'IsNew'
+      } else if (filter === 'All') {
+        // Aquí puedes agregar la lógica para filtrar por 'All'
+      }
+    }
+
+    const products = queryBuilder.getMany();
+
+    return products;
+  }
+
+  async findAllByCategory(slug: string, query: QueryProductDto) {
+    const { filter, pet, subcategory } = query;
+
+  
+    let queryBuilder = this.productRepository
+      .createQueryBuilder('product')
+      .where('product.isActive = :isActive', { isActive: true })
+      .leftJoinAndSelect('product.productImages', 'productImages')
+      .leftJoin('product.subCategory', 'subCategory')
+      .leftJoin('subCategory.category', 'category')
+      .andWhere('category.name = :categoryName', { categoryName: slug });
+
+    if (pet && pet !== 'all') {
+      queryBuilder = queryBuilder
+        .leftJoin('product.pet', 'pet')
+        .andWhere('pet.name = :petName', { petName: pet });
+    }
+
+    if (subcategory && subcategory !== 'all') {
+      queryBuilder = queryBuilder
+        .andWhere('subCategory.name = :subCategoryName', {
+          subCategoryName: subcategory,
+        });
+    }
+
+    if (filter) {
+      if (filter === 'isPopular') {
+        queryBuilder = queryBuilder.andWhere('product.isPopular = :isPopular', {
+          isPopular: true,
+        });
+      } else if (filter === 'IsNew') {
+        // Aquí puedes agregar la lógica para filtrar por 'IsNew'
+      } else if (filter === 'All') {
+        // Aquí puedes agregar la lógica para filtrar por 'All'
+      }
+    }
+
+    const products = queryBuilder.getMany();
+
+    return products;
+  }
+
   async uploadImages(files: Express.Multer.File[]) {
     try {
       const response = await this.cloudinaryService.uploadFiles(
@@ -187,6 +366,28 @@ export class ProductsService {
         'products',
       );
       return response.map((file) => file.url);
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  async deleteImage(id: number) {
+    const productImage = await this.productImageRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!productImage) {
+      throw new NotFoundException(`Image not found`);
+    }
+    try {
+      await Promise.all([
+        this.productImageRepository.remove(productImage),
+        this.cloudinaryService.destroyFile(productImage.url),
+      ]);
+
+      return { message: 'Image deleted successfully' };
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }

@@ -13,6 +13,7 @@ import {
   UploadedFile,
   UploadedFiles,
   BadRequestException,
+  Query,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -21,6 +22,7 @@ import { Auth } from 'src/auth/decorators/auth.decorator';
 import { ValidRoles } from 'src/auth/enums/validate-roles.enum';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { fileFilter } from '../common/utils/fileFilter';
+import { QueryProductDto } from './dto/queries..dto';
 
 
 @Controller('products')
@@ -34,8 +36,8 @@ export class ProductsController {
   }
 
   @Get()
-  findAll() {
-    return this.productsService.findAll();
+  findAll(@Query() query: QueryProductDto) {
+    return this.productsService.findAll(query);
   }
 
   @Get('admin')
@@ -48,6 +50,22 @@ export class ProductsController {
   findOne(@Param('id',ParseUUIDPipe) id: string) {
     return this.productsService.findOne(id);
   }
+
+  @Get('slug/:slug')
+  findOneBySlug(@Param('slug') slug: string) {
+    return this.productsService.findOneBySlug(slug);
+  }
+
+  @Get('byPet/:pet')
+   findPetProducts(@Param('pet') pet: string,@Query() query: QueryProductDto){
+      return this.productsService.findAllByPet(pet,query);
+    }
+
+    @Get('byCategory/:slug')
+    findProductsCategory(@Param('slug') slug: string,@Query() query: QueryProductDto){
+      return this.productsService.findAllByCategory(slug,query);
+    }
+  
 
   @Put(':id')
   @Auth(ValidRoles.admin)
@@ -75,5 +93,17 @@ export class ProductsController {
     }
     return this.productsService.uploadImages(files);
   }
+
+  // @Post('save-images/:id')
+  // @Auth(ValidRoles.admin)
+
+  @Delete('delete-image/:id')
+  @Auth(ValidRoles.admin)
+  deleteImage(@Param('id', ParseIntPipe) id: string) {
+    return this.productsService.deleteImage(+id);
+  }
+
+  
+
 
 }

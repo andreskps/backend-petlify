@@ -15,6 +15,8 @@ import { ReviewModule } from './review/review.module';
 import { SubcategoriesModule } from './subcategories/subcategories.module';
 import { VariantsModule } from './variants/variants.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { CouponsModule } from './coupons/coupons.module';
+import { DiscountsModule } from './discounts/discounts.module';
 
 @Module({
   imports: [
@@ -58,6 +60,10 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     VariantsModule,
 
     CloudinaryModule,
+
+    CouponsModule,
+
+    DiscountsModule,
 
   ],
   controllers: [AppController],

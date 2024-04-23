@@ -13,6 +13,7 @@ import { Brand } from 'src/brand/entities/brand.entity';
 import { Pet } from 'src/pet/entities/pet.entity';
 import { Review } from 'src/review/entities/review.entity';
 import { ProductImage } from './ProductImage';
+import { Discount } from 'src/discounts/entities/discount.entity';
 
 @Entity()
 export class Product {
@@ -50,6 +51,13 @@ export class Product {
   })
   isPopular: boolean;
 
+  @Column('boolean', {
+    default: false,
+  })
+  isNew: boolean;
+
+  
+
   @ManyToOne(() => Subcategory, (subcategory) => subcategory.products,{
     onDelete: 'SET NULL',
   })
@@ -60,6 +68,9 @@ export class Product {
 
   @ManyToOne(() => Pet, (pet) => pet.products)
   pet: Pet;
+
+  @ManyToOne(() => Discount, (discount) => discount.products)
+  discount: Discount;
 
   @OneToMany(() => Review, (review) => review.product)
   reviews: Review[];

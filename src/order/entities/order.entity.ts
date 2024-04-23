@@ -11,6 +11,7 @@ import {
 import { OrderStatus } from '../enums/orderStatus.enum';
 import { PaymentMethod } from '../enums/paymentMethod.enum';
 import { OrderItem } from './orderItem.entity';
+import { Coupon } from 'src/coupons/entities/coupon.entity';
 
 @Entity()
 export class Order {
@@ -58,4 +59,7 @@ export class Order {
 
   @OneToMany(() => OrderItem, (orderItem) => orderItem.order)
   orderItems: OrderItem[];
+
+  @ManyToOne(() => Coupon, (coupon) => coupon.orders, { nullable: true })
+  coupon: Coupon;
 }
