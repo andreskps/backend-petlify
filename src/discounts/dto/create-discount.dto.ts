@@ -1,4 +1,4 @@
-import { IsDecimal, IsString,IsDate, IsNumber } from 'class-validator';
+import { IsDecimal, IsString,IsDate, IsNumber, IsOptional } from 'class-validator';
 
 export class CreateDiscountDto {
   @IsString()
@@ -8,8 +8,10 @@ export class CreateDiscountDto {
   percentage: number;
 
   @IsDate()
+  @IsOptional()
   expiresAt: Date;
 
   @IsDate()
+  @IsOptional()
   startsAt: Date;
 }

@@ -11,8 +11,11 @@ export class Coupon {
   })
   code: string;
 
-  @Column('decimal', {
-    nullable: false,
+  @Column('numeric', {
+    transformer: {
+      to: (value: number) => value,
+      from: (value: string) => parseFloat(value),
+    },
   })
   percentage: number;
 

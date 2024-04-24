@@ -15,8 +15,11 @@ export class Discount {
   @Column('text')
   name: string;
 
-  @Column('decimal', {
-    nullable: false,
+  @Column('numeric', {
+    transformer: {
+      to: (value: number) => value,
+      from: (value: string) => parseFloat(value),
+    },
   })
   percentage: number;
 
@@ -25,10 +28,10 @@ export class Discount {
   })
   isActive: boolean;
 
-  @Column({ type: 'timestamptz' })
+  @Column({ type: 'timestamptz' ,nullable: true})
   expiresAt: Date;
 
-  @Column({ type: 'timestamptz' })
+  @Column({ type: 'timestamptz' ,nullable: true})
   startsAt: Date;
 
   @DeleteDateColumn({ type: 'timestamptz' })
