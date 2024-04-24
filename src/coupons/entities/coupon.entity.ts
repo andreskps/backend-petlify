@@ -6,7 +6,9 @@ export class Coupon {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('text')
+  @Column('text',{
+    unique: true,
+  })
   code: string;
 
   @Column('decimal', {
@@ -14,8 +16,13 @@ export class Coupon {
   })
   percentage: number;
 
-  @Column('decimal', {
-    nullable: true,
+  
+  
+  @Column({ type: 'numeric', precision: 10, scale: 2 ,nullable: true,
+    transformer:{
+      to: (value: number) => value,
+      from: (value: string) => parseFloat(value),
+    }
   })
   minimumAmount: number;
 
@@ -24,10 +31,10 @@ export class Coupon {
   })
   isActive: boolean;
 
-  @Column({ type: 'timestamptz' })
+  @Column({ type: 'timestamptz' ,nullable: true })
   expiresAt: Date;
 
-  @Column({ type: 'timestamptz' })
+  @Column({ type: 'timestamptz' ,nullable: true })
   startsAt: Date;
 
   @OneToMany(() => Order, (order) => order.coupon)
