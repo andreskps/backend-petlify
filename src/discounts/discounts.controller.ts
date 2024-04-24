@@ -1,13 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Put } from '@nestjs/common';
 import { DiscountsService } from './discounts.service';
 import { CreateDiscountDto } from './dto/create-discount.dto';
 import { UpdateDiscountDto } from './dto/update-discount.dto';
+import { Auth } from 'src/auth/decorators/auth.decorator';
+import { ValidRoles } from 'src/auth/enums/Validate-Roles.enum';
 
 @Controller('discounts')
 export class DiscountsController {
   constructor(private readonly discountsService: DiscountsService) {}
 
   @Post()
+  @Auth(ValidRoles.admin)
   create(@Body() createDiscountDto: CreateDiscountDto) {
     return this.discountsService.create(createDiscountDto);
   }
@@ -18,17 +21,19 @@ export class DiscountsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id',ParseIntPipe) id: string) {
     return this.discountsService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDiscountDto: UpdateDiscountDto) {
+  @Put(':id')
+  @Auth(ValidRoles.admin)
+  update(@Param('id',ParseIntPipe) id: string, @Body() updateDiscountDto: UpdateDiscountDto) {
     return this.discountsService.update(+id, updateDiscountDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  @Auth(ValidRoles.admin)
+  remove(@Param('id',ParseIntPipe) id: string) {
     return this.discountsService.remove(+id);
   }
 }
