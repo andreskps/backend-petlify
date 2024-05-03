@@ -43,6 +43,9 @@ export class ProductsService {
       ...(createProductDto.petId
         ? { pet: { id: createProductDto.petId } }
         : {}),
+      ...(createProductDto.discountId
+        ? { discount: { id: createProductDto.discountId } }
+        : {}),
     });
     const savedProduct = await this.productRepository.save(product);
 
@@ -113,7 +116,6 @@ export class ProductsService {
       } else if (filter === 'IsNew') {
         // Aquí puedes agregar la lógica para filtrar por 'IsNew'
       } else if (filter === 'All') {
-        
         // Aquí puedes agregar la lógica para filtrar por 'All'
       }
     }
@@ -138,6 +140,7 @@ export class ProductsService {
       .leftJoinAndSelect('subCategory.category', 'category')
       .leftJoinAndSelect('product.productImages', 'productImages')
       .leftJoinAndSelect('product.brand', 'brand')
+      .leftJoinAndSelect('product.discount', 'discount')
       .leftJoinAndSelect('product.pet', 'pet')
       .leftJoinAndSelect(
         'product.productVariants',
@@ -178,6 +181,11 @@ export class ProductsService {
       mappedProduct['brandId'] = product.brand.id;
     }
 
+    if (product.discount) {
+      mappedProduct['discountId'] = product.discount.id;
+    }
+
+
     return mappedProduct;
   }
 
@@ -194,6 +202,9 @@ export class ProductsService {
       ...(updateProductDto.petId
         ? { pet: { id: updateProductDto.petId } }
         : {}),
+        ...(updateProductDto.discountId !== undefined
+          ? { discount: updateProductDto.discountId ? { id: updateProductDto.discountId } : null }
+          : {}),
     });
 
     if (!productUpdate) {
@@ -232,6 +243,7 @@ export class ProductsService {
       .leftJoinAndSelect('subCategory.category', 'category')
       .leftJoinAndSelect('product.productImages', 'productImages')
       .leftJoinAndSelect('product.brand', 'brand')
+      .leftJoinAndSelect('product.discount', 'discount')
       .leftJoinAndSelect('product.pet', 'pet')
       .leftJoinAndSelect(
         'product.productVariants',
@@ -265,6 +277,10 @@ export class ProductsService {
         attribute: variant.option.attribute.name,
         value: variant.option.value,
       })),
+      discount: {
+        id: product.discount ? product.discount.id : null,
+        percentage: product.discount ? product.discount.percentage : null,
+      },
       images: product.productImages,
     };
 
@@ -320,11 +336,11 @@ export class ProductsService {
   async findAllByCategory(slug: string, query: QueryProductDto) {
     const { filter, pet, subcategory } = query;
 
-  
     let queryBuilder = this.productRepository
       .createQueryBuilder('product')
       .where('product.isActive = :isActive', { isActive: true })
       .leftJoinAndSelect('product.productImages', 'productImages')
+      .leftJoinAndSelect('product.discount', 'discount')
       .leftJoin('product.subCategory', 'subCategory')
       .leftJoin('subCategory.category', 'category')
       .andWhere('category.name = :categoryName', { categoryName: slug });
@@ -336,10 +352,12 @@ export class ProductsService {
     }
 
     if (subcategory && subcategory !== 'all') {
-      queryBuilder = queryBuilder
-        .andWhere('subCategory.name = :subCategoryName', {
+      queryBuilder = queryBuilder.andWhere(
+        'subCategory.name = :subCategoryName',
+        {
           subCategoryName: subcategory,
-        });
+        },
+      );
     }
 
     if (filter) {

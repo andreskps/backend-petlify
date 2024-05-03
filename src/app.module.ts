@@ -17,6 +17,8 @@ import { VariantsModule } from './variants/variants.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { CouponsModule } from './coupons/coupons.module';
 import { DiscountsModule } from './discounts/discounts.module';
+import { DepartamentosModule } from './departamentos/departamentos.module';
+import { MunicipiosModule } from './municipios/municipios.module';
 
 @Module({
   imports: [
@@ -64,6 +66,10 @@ import { DiscountsModule } from './discounts/discounts.module';
     CouponsModule,
 
     DiscountsModule,
+
+    DepartamentosModule,
+
+    MunicipiosModule,
 
   ],
   controllers: [AppController],

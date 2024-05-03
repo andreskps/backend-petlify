@@ -64,6 +64,10 @@ export class CreateProductDto {
   @IsOptional()
   brandId: number;
 
+  @IsNumber()
+  @IsOptional()
+  discountId: number;
+
 
 
   @IsOptional()
