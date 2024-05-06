@@ -7,22 +7,17 @@ export class OrderAddress {
   id: number;
 
   @Column('text')
-  name: string;
-
-  @Column('text')
-  lastName: string;
-
-  @Column('text')
   address: string;
 
-  @Column('text')
+  @Column('text', {
+    nullable: true,
+  })
   neighborhood: string;
-  
-  @Column('text')
-  addressDetail: string;
 
-  @Column('text')
-  phone: string;
+  @Column('text', {
+    nullable: true,
+  })
+  addressDetail: string;
 
   @ManyToOne(() => Municipio, (municipio) => municipio.orderAddresses)
   municipio: Municipio;

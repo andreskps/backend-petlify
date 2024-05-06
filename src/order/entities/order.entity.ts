@@ -21,15 +21,27 @@ export class Order {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('text', {
-    nullable: true,
-  })
-  note: string;
+  @Column('text')
+  name: string;
+
+  @Column('text')
+  email: string;
+
+  @Column('text')
+  phone: string;
+
+  @Column('text')
+  lastName: string;
 
   @Column('float', {
     nullable: false,
   })
   totalAmount: number;
+
+  @Column('float', {
+    nullable: false,
+  })
+  priceShipping: number;
 
   @Column('boolean', {
     default: false,

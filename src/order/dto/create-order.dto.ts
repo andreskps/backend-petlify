@@ -1,27 +1,59 @@
 import { Type } from 'class-transformer';
-import { IsArray, IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+  IsArray,
+  IsInt,
+  IsNotEmpty,
+  IsObject,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 
-class CreateVariantDto {
+class VariantsDto {
+  @IsNotEmpty()
+  @IsInt()
   id: number;
+
+  @IsInt()
   quantity: number;
 }
 
 class AddressDto {
-  name: string;
-  lastName: string;
+  @IsString()
   address: string;
+
+  @IsOptional()
+  @IsString()
   neighborhood: string;
+
+  @IsOptional()
+  @IsString()
   addressDetail: string;
-  phone: string;
+
+  @IsInt()
   municipioId: number;
 }
 
 export class CreateOrderDto {
+  @IsString()
+  name: string;
+
+  @IsString()
+  lastName: string;
+
+  @IsString()
+  email: string;
+
+  @IsString()
+  phone: string;
+
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CreateVariantDto)
-  variants: CreateVariantDto[];
+  @Type(() => VariantsDto)
+  variants: VariantsDto[];
 
+  @IsObject()
+  @ValidateNested()
   @Type(() => AddressDto)
   address: AddressDto;
 
