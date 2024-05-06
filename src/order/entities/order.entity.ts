@@ -3,8 +3,10 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -12,6 +14,7 @@ import { OrderStatus } from '../enums/orderStatus.enum';
 import { PaymentMethod } from '../enums/paymentMethod.enum';
 import { OrderItem } from './orderItem.entity';
 import { Coupon } from 'src/coupons/entities/coupon.entity';
+import { OrderAddress } from './orderAddress.entity';
 
 @Entity()
 export class Order {
@@ -62,4 +65,8 @@ export class Order {
 
   @ManyToOne(() => Coupon, (coupon) => coupon.orders, { nullable: true })
   coupon: Coupon;
+
+  @OneToOne(() => OrderAddress)
+  @JoinColumn()
+  orderAddress: OrderAddress;
 }

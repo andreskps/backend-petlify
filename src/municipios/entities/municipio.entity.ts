@@ -1,5 +1,6 @@
 import { Departamento } from 'src/departamentos/entities/departamento.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { OrderAddress } from 'src/order/entities/orderAddress.entity';
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Municipio {
@@ -19,4 +20,8 @@ export class Municipio {
 
   @ManyToOne(() => Departamento, (departamento) => departamento.municipios)
   departamento: Departamento;
+
+  @OneToMany(() => OrderAddress, (orderAddress) => orderAddress.municipio)
+  orderAddresses: OrderAddress[];
+
 }

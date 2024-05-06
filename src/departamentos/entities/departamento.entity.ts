@@ -13,4 +13,5 @@ export class Departamento {
   @OneToMany(() => Municipio, (municipio) => municipio.departamento)
     municipios: Municipio[];
   
+    
 }

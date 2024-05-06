@@ -5,13 +5,16 @@ import { ProductVariant } from 'src/variants/entities/product-variant.entity';
 @Entity()
 export class OrderItem {
   @PrimaryGeneratedColumn()
-  public id: number;
+  id: number;
 
   @Column({ nullable: false })
   price: number;
 
   @Column('float')
   unitPrice: number;
+
+  @Column('int')
+  quantity: number;
 
   @Column('float')
   total: number;
