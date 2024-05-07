@@ -37,18 +37,17 @@ export class CouponsService {
   }
 
   async findOne(id: number) {
-     const coupon = await this.couponRepository.findOne({
-      where:{
-        id:id
-      }
-     })
+    const coupon = await this.couponRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
 
-      if(!coupon){
-        throw new NotFoundException(`Coupon #${id} not found`)
-      }
+    if (!coupon) {
+      throw new NotFoundException(`Coupon #${id} not found`);
+    }
 
-      return coupon;
-       
+    return coupon;
   }
 
   async update(id: number, updateCouponDto: UpdateCouponDto) {
@@ -67,8 +66,17 @@ export class CouponsService {
       }
 
       throw new InternalServerErrorException('Error updating coupon');
-      
     }
+  }
+
+  async findByCode(code: string) {
+    const coupon = await this.couponRepository.findOne({
+      where: { code: code, isActive: true },
+    });
+    if (!coupon) {
+      throw new NotFoundException(`Coupon with code ${code} not found`);
+    }
+    return coupon;
   }
 
   async remove(id: number) {

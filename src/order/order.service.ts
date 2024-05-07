@@ -24,77 +24,6 @@ export class OrderService {
     private municipioRepository: Repository<Municipio>,
   ) {}
 
-  async create(createOrderDto: CreateOrderDto) {
-    const { variants } = createOrderDto;
-
-    // async (transactionalEntityManager: EntityManager) => {
-
-    //   const orderAddress = this.orderAddressRepository.create(createOrderDto.orderAddress)
-    //   await transactionalEntityManager.save(orderAddress)
-
-    //   const order = this.orderRepository.create({
-    //     orderAddress,
-    //     total: 0,
-    //   })
-    //   await transactionalEntityManager.save(order)
-
-    //   let total = 0
-    //   const orderItems = variants.map(async (variant) => {
-    //     const productVariant = await this.productVariantRepository.findOne({
-    //       where: { id: variant.id },
-    //       relations: ['product', 'product.discount'],
-    //     })
-    //     const orderItem = this.orderItemRepository.create({
-    //       order,
-    //       productVariant,
-    //       quantity: variant.quantity,
-    //       price: productVariant.price,
-    //     })
-    //     total += orderItem.price * orderItem.quantity
-    //     await transactionalEntityManager.save(orderItem)
-    //   })
-
-    //   order.total = total
-    //   await transactionalEntityManager.save(order)
-    // }
-
-    // const productVariant = await this.productVariantRepository.findOne({
-    //   where: { id: variants[0].id },
-    //   relations: ['product', 'product.discount'],
-    //   select: ['id', 'price', 'product'],
-    // })
-
-    // return productVariant
-
-    const products = await Promise.all(
-      variants.map(async (variant) => {
-        const productVariant = await this.productVariantRepository.findOne({
-          where: { id: variant.id },
-          relations: ['product', 'product.discount'],
-          select: ['id', 'price', 'product'],
-        });
-        return productVariant;
-      }),
-    );
-
-    return products;
-
-    // const items = variants.map(async (variant) => {
-    //   const productVariant = await this.productVariantRepository.findOne({
-    //     where: { id: variant.id },
-    //     // relations: ['product', 'product.discount'],
-    //   })
-    //   // const orderItem = this.orderItemRepository.create({
-    //   //   productVariant,
-    //   //   quantity: variant.quantity,
-    //   //   price: productVariant.price,
-    //   // })
-    //   return productVariant;
-    // })
-
-    // return items
-  }
-
   async createOrder(createOrderDto: CreateOrderDto) {
     const { address } = createOrderDto;
   
@@ -156,6 +85,7 @@ export class OrderService {
           lastName: createOrderDto.lastName,
           email: createOrderDto.email,
           phone: createOrderDto.phone,
+          namePet: createOrderDto.namePet,
         });
   
         await transactionalEntityManager.save(order);

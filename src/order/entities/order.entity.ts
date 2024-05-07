@@ -33,6 +33,9 @@ export class Order {
   @Column('text')
   lastName: string;
 
+  @Column('text')
+  namePet: string;
+  
   @Column('float', {
     nullable: false,
   })

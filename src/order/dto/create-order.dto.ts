@@ -47,6 +47,10 @@ export class CreateOrderDto {
   @IsString()
   phone: string;
 
+
+  @IsString()
+  namePet: string;
+
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => VariantsDto)

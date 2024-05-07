@@ -25,6 +25,12 @@ export class CouponsController {
     return this.couponsService.findOne(+id);
   }
 
+  @Get('code/:code')
+
+  findByCode(@Param('code') code: string) {
+    return this.couponsService.findByCode(code);
+  }
+
   @Put(':id')
   @Auth(ValidRoles.admin)
   update(@Param('id',ParseIntPipe) id: string, @Body() updateCouponDto: UpdateCouponDto) {
