@@ -8,6 +8,7 @@ import { Order } from './entities/order.entity';
 import { OrderItem } from './entities/orderItem.entity';
 import { ProductVariant } from 'src/variants/entities/product-variant.entity';
 import { Municipio } from 'src/municipios/entities/municipio.entity';
+import { Coupon } from 'src/coupons/entities/coupon.entity';
 
 @Injectable()
 export class OrderService {
@@ -22,13 +23,14 @@ export class OrderService {
     private productVariantRepository: Repository<ProductVariant>,
     @InjectRepository(Municipio)
     private municipioRepository: Repository<Municipio>,
+    @InjectRepository(Coupon)
+    private couponRepository: Repository<Coupon>,
   ) {}
 
   async createOrder(createOrderDto: CreateOrderDto) {
     const { address } = createOrderDto;
   
     let subtotal = 0;
-    let couponDiscount = 0;
   
     const priceShipping = await this.calculateShippingPrice(createOrderDto);
   
@@ -69,16 +71,33 @@ export class OrderService {
   
         const orderAddress = this.orderAddressRepository.create(address);
   
-        const savedOrderAddress = await transactionalEntityManager.save(OrderAddress, {
-          ...orderAddress,
-          municipio: {
-            id: address.municipioId,
+        const savedOrderAddress = await transactionalEntityManager.save(
+          OrderAddress,
+          {
+            ...orderAddress,
+            municipio: {
+              id: address.municipioId,
+            },
           },
-        });
+        );
+  
+        let coupon = null;
+        if (createOrderDto.coupon) {
+          const discount = await this.calculateCouponDiscount(
+            createOrderDto.coupon,
+            subtotal,
+          );
+  
+          subtotal -= (subtotal * discount) / 100;
+  
+          coupon = await this.couponRepository.findOne({
+            where: { code: createOrderDto.coupon, isActive: true },
+          });
+        }
   
         const order = this.orderRepository.create({
           orderItems,
-          totalAmount: subtotal + priceShipping - couponDiscount,
+          totalAmount: subtotal + priceShipping,
           orderAddress: savedOrderAddress,
           priceShipping: priceShipping,
           name: createOrderDto.name,
@@ -86,6 +105,7 @@ export class OrderService {
           email: createOrderDto.email,
           phone: createOrderDto.phone,
           namePet: createOrderDto.namePet,
+          coupon: coupon,
         });
   
         await transactionalEntityManager.save(order);
@@ -119,5 +139,21 @@ export class OrderService {
     });
 
     return municipio.priceShipping;
+  }
+
+  private async calculateCouponDiscount(code: string, subTotal: number) {
+    const coupon = await this.couponRepository.findOne({
+      where: { code, isActive: true },
+    });
+
+    if (!coupon) {
+      return 0;
+    }
+
+    if (subTotal < coupon.minimumAmount) {
+      return 0;
+    }
+
+    return coupon.percentage;
   }
 }

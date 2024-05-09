@@ -7,11 +7,12 @@ import { OrderItem } from './entities/orderItem.entity';
 import { OrderAddress } from './entities/orderAddress.entity';
 import { VariantsModule } from 'src/variants/variants.module';
 import { MunicipiosModule } from 'src/municipios/municipios.module';
+import { CouponsModule } from 'src/coupons/coupons.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Order,OrderItem,OrderAddress]),VariantsModule,MunicipiosModule],
+  imports: [TypeOrmModule.forFeature([Order,OrderItem,OrderAddress]),VariantsModule,MunicipiosModule,CouponsModule],
   controllers: [OrderController],
   providers: [OrderService],
-  exports:[OrderService]
+  exports:[OrderService,TypeOrmModule]
 })
 export class OrderModule {}
