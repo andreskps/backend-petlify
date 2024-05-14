@@ -1,4 +1,4 @@
-import { IsOptional, IsIn } from 'class-validator';
+import { IsOptional, IsIn, IsNumber } from 'class-validator';
 
 export class QueryProductDto {
   @IsOptional()
@@ -10,6 +10,15 @@ export class QueryProductDto {
 
   @IsOptional()
   subcategory: string;
+
+  @IsOptional()
+  @IsNumber()
+  page: number;
+
+  @IsOptional()
+  @IsNumber()
+  limit: number;
+
 
 
   @IsOptional()

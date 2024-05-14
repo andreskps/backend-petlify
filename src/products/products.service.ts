@@ -305,13 +305,16 @@ export class ProductsService {
   }
 
   async findAllByPet(pet: string, query: QueryProductDto) {
-    const { filter, brand, subcategory } = query;
+    const { filter, brand, subcategory,page=1,limit=3 } = query;
 
-    console.log(brand);
     let queryBuilder = this.productRepository
       .createQueryBuilder('product')
+      .skip((page-1)*limit)
+      .take(limit)
       .where('product.isActive = :isActive', { isActive: true })
+      .leftJoinAndSelect('product.discount', 'discount')
       .leftJoinAndSelect('product.productImages', 'productImages')
+      .leftJoinAndSelect('product.productVariants', 'productVariants')
       .leftJoin('product.pet', 'pet')
       .andWhere('pet.name = :petName', { petName: pet });
 
@@ -341,19 +344,26 @@ export class ProductsService {
       }
     }
 
-    const products = queryBuilder.getMany();
+    const products = await queryBuilder.getMany();
+    const total = await queryBuilder.getCount();
 
-    return products;
+    return {
+      products,
+      total,
+    };
   }
 
   async findAllByCategory(slug: string, query: QueryProductDto) {
-    const { filter, pet, subcategory } = query;
+    const { filter, pet, subcategory,page=1,limit=3 } = query;
 
     let queryBuilder = this.productRepository
       .createQueryBuilder('product')
+      .skip((page-1)*limit)
+      .take(limit)
       .where('product.isActive = :isActive', { isActive: true })
       .leftJoinAndSelect('product.productImages', 'productImages')
       .leftJoinAndSelect('product.discount', 'discount')
+      .leftJoinAndSelect('product.productVariants', 'productVariants')
       .leftJoin('product.subCategory', 'subCategory')
       .leftJoin('subCategory.category', 'category')
       .andWhere('category.name = :categoryName', { categoryName: slug });
@@ -385,9 +395,13 @@ export class ProductsService {
       }
     }
 
-    const products = queryBuilder.getMany();
+    const products = await queryBuilder.getMany();
+    const total = await queryBuilder.getCount();
 
-    return products;
+    return {
+      products,
+      total,
+    };
   }
 
   async uploadImages(files: Express.Multer.File[]) {
