@@ -125,6 +125,19 @@ export class ProductsService {
     return products;
   }
 
+  async findPopular() {
+    const products = await this.productRepository.find({
+      where: {
+        isPopular: true,
+        isActive: true
+      },
+      relations: ['productImages'],
+      take:6
+
+    });
+    return products;
+  }
+
   async findAllAdmin() {
     const products = await this.productRepository.find({
       // relations: ['subCategory', 'subCategory.category'],

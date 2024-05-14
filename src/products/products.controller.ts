@@ -24,7 +24,6 @@ import { FilesInterceptor } from '@nestjs/platform-express';
 import { fileFilter } from '../common/utils/fileFilter';
 import { QueryProductDto } from './dto/queries..dto';
 
-
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
@@ -45,9 +44,13 @@ export class ProductsController {
   findAllAdmin() {
     return this.productsService.findAllAdmin();
   }
+  @Get('popular')
+  findPopular() {
+    return this.productsService.findPopular();
+  }
 
   @Get(':id')
-  findOne(@Param('id',ParseUUIDPipe) id: string) {
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.productsService.findOne(id);
   }
 
@@ -57,25 +60,30 @@ export class ProductsController {
   }
 
   @Get('byPet/:pet')
-   findPetProducts(@Param('pet') pet: string,@Query() query: QueryProductDto){
-      return this.productsService.findAllByPet(pet,query);
-    }
+  findPetProducts(@Param('pet') pet: string, @Query() query: QueryProductDto) {
+    return this.productsService.findAllByPet(pet, query);
+  }
 
-    @Get('byCategory/:slug')
-    findProductsCategory(@Param('slug') slug: string,@Query() query: QueryProductDto){
-      return this.productsService.findAllByCategory(slug,query);
-    }
-  
+  @Get('byCategory/:slug')
+  findProductsCategory(
+    @Param('slug') slug: string,
+    @Query() query: QueryProductDto,
+  ) {
+    return this.productsService.findAllByCategory(slug, query);
+  }
 
   @Put(':id')
   @Auth(ValidRoles.admin)
-  async update(@Param('id', ParseUUIDPipe) id: string, @Body() updateProductDto: UpdateProductDto) {
+  async update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateProductDto: UpdateProductDto,
+  ) {
     return await this.productsService.update(id, updateProductDto);
   }
 
   @Delete(':id')
   @Auth(ValidRoles.admin)
-  remove(@Param('id',ParseUUIDPipe) id: string) {
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.productsService.remove(id);
   }
 
@@ -87,7 +95,6 @@ export class ProductsController {
     }),
   )
   uploadImages(@UploadedFiles() files: Express.Multer.File[]) {
-     
     if (!files || !files.length) {
       throw new BadRequestException('No files uploaded');
     }
@@ -102,8 +109,4 @@ export class ProductsController {
   deleteImage(@Param('id', ParseIntPipe) id: string) {
     return this.productsService.deleteImage(+id);
   }
-
-  
-
-
 }
