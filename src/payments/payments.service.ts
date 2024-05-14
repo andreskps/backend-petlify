@@ -16,11 +16,15 @@ export class PaymentsService {
   constructor(
     @InjectRepository(Order)
     private orderRepository: Repository<Order>,
+    @Inject('MercadoPagoConfig') private mercadoPagoConfig: MercadoPagoConfig,
+    @Inject('Preference') private preference: Preference,
+    @Inject('Payment') private payment: Payment,
   ) {}
 
   async create(createPaymentDto: CreatePaymentDto) {
 
     const {idOrder} =createPaymentDto
+
 
     const order = await this.orderRepository.findOne({
       where: { id: idOrder },
@@ -50,16 +54,18 @@ export class PaymentsService {
             },
           ],
           back_urls: {
-            success: 'localhost:3000/success',
-            failure: 'localhost:3000/failure',
-            pending: 'localhost:3000/pending',
+            success: `${process.env.URL_FRONTEND}/success`,
+            failure: `${process.env.URL_FRONTEND}/failure`,
+            pending: `${process.env.URL_FRONTEND}/pending`,
           },
           external_reference: order.id.toString(),
           auto_return: 'approved',
         },
       });
 
-      return response;
+      return {
+        url:response.init_point
+      }
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(error.message);
@@ -89,16 +95,19 @@ export class PaymentsService {
         return 'Payment not approved'
       }
 
-      console.log(response.external_reference);
 
       const order = await this.orderRepository.findOne({
         where: { id: parseInt(response.external_reference) },
       });
-      console.log(order)
+
+      if (!order) {
+        throw new InternalServerErrorException('Order not found');
+      }
+
 
 
       order.isPaid = true;
-      order.paymentMethod = PaymentMethod.CREDIT_CARD;
+      // order.paymentMethod = PaymentMethod.MERCADO_PAGO;
 
       await this.orderRepository.save(order);
 
@@ -109,22 +118,6 @@ export class PaymentsService {
       console.log(error);
       throw new InternalServerErrorException(error.message);
     } 
-   
   }
 
-  findAll() {
-    return `This action returns all payments`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} payment`;
-  }
-
-  update(id: number, updatePaymentDto: UpdatePaymentDto) {
-    return `This action updates a #${id} payment`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} payment`;
-  }
 }

@@ -3,15 +3,15 @@ import { PaymentsService } from './payments.service';
 import { payment } from './config/mercadoPago';
 import { PaymentsController } from './payments.controller';
 import { OrderModule } from 'src/order/order.module';
+import { mercadoPagoConfigProvider, paymentProvider, preferenceProvider } from './providers/paymentsProvider';
 
 @Module({
   controllers: [PaymentsController],
   providers: [
     PaymentsService,
-    {
-      provide: 'PAYMENT',
-      useValue: payment,
-    },
+    mercadoPagoConfigProvider,
+    preferenceProvider,
+    paymentProvider
   ],
   imports:[OrderModule],
   exports: [PaymentsService],

@@ -9,6 +9,7 @@ import { OrderItem } from './entities/orderItem.entity';
 import { ProductVariant } from 'src/variants/entities/product-variant.entity';
 import { Municipio } from 'src/municipios/entities/municipio.entity';
 import { Coupon } from 'src/coupons/entities/coupon.entity';
+import { PaymentMethod } from './enums/paymentMethod.enum';
 
 @Injectable()
 export class OrderService {
@@ -29,11 +30,11 @@ export class OrderService {
 
   async createOrder(createOrderDto: CreateOrderDto) {
     const { address } = createOrderDto;
-  
+
     let subtotal = 0;
-  
+
     const priceShipping = await this.calculateShippingPrice(createOrderDto);
-  
+
     return this.orderRepository.manager.transaction(
       async (transactionalEntityManager) => {
         const orderItemsPromises = createOrderDto.variants.map(
@@ -45,13 +46,13 @@ export class OrderService {
                 relations: ['product', 'product.discount'],
               },
             );
-  
+
             const discount = productVariant.product.discount?.percentage || 0;
-  
+
             const unitPrice =
               productVariant.price - (productVariant.price * discount) / 100;
             const total = unitPrice * variant.quantity;
-  
+
             const orderItem = this.orderItemRepository.create({
               productVariant,
               quantity: variant.quantity,
@@ -59,18 +60,18 @@ export class OrderService {
               price: productVariant.price,
               total,
             });
-  
+
             await transactionalEntityManager.save(orderItem);
             subtotal += total;
-  
+
             return orderItem;
           },
         );
-  
+
         const orderItems = await Promise.all(orderItemsPromises);
-  
+
         const orderAddress = this.orderAddressRepository.create(address);
-  
+
         const savedOrderAddress = await transactionalEntityManager.save(
           OrderAddress,
           {
@@ -80,23 +81,24 @@ export class OrderService {
             },
           },
         );
-  
+
         let coupon = null;
         if (createOrderDto.coupon) {
           const discount = await this.calculateCouponDiscount(
             createOrderDto.coupon,
             subtotal,
           );
-  
+
           subtotal -= (subtotal * discount) / 100;
-  
+
           coupon = await this.couponRepository.findOne({
             where: { code: createOrderDto.coupon, isActive: true },
           });
         }
-  
+
         const order = this.orderRepository.create({
           orderItems,
+          paymentMethod: this.getPayMethod(createOrderDto.paymentMethod),
           totalAmount: subtotal + priceShipping,
           orderAddress: savedOrderAddress,
           priceShipping: priceShipping,
@@ -107,16 +109,18 @@ export class OrderService {
           namePet: createOrderDto.namePet,
           coupon: coupon,
         });
-  
+
         await transactionalEntityManager.save(order);
-  
+
         return order;
       },
     );
   }
 
-  findAll() {
-    return `This action returns all order`;
+  async findAll() {
+    const orders = await this.orderRepository.find();
+
+    return orders;
   }
 
   findOne(id: number) {
@@ -155,5 +159,20 @@ export class OrderService {
     }
 
     return coupon.percentage;
+  }
+
+  private getPayMethod(method: string) {
+    const paymentMethodKey = Object.keys(PaymentMethod).find(
+      (key) => PaymentMethod[key as keyof typeof PaymentMethod] === method,
+    );
+
+    if (!paymentMethodKey) {
+      throw new Error(`Invalid payment method: ${method}`);
+    }
+
+    const paymentMethod =
+      PaymentMethod[paymentMethodKey as keyof typeof PaymentMethod];
+
+    return paymentMethod;
   }
 }

@@ -47,9 +47,11 @@ export class CreateOrderDto {
   @IsString()
   phone: string;
 
-
   @IsString()
   namePet: string;
+
+  @IsString()
+  paymentMethod: string;
 
   @IsArray()
   @ValidateNested({ each: true })
