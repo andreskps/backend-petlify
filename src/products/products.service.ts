@@ -283,6 +283,7 @@ export class ProductsService {
       slug: product.slug,
       isActive: product.isActive,
       isPopular: product.isPopular,
+      isLowStock: product.isLowStock,
       variants: product.productVariants.map((variant) => ({
         id: variant.id,
         price: +variant.price,
@@ -326,7 +327,7 @@ export class ProductsService {
         });
     }
 
-    if (brand) {
+    if (brand && brand !== 'all') {
       queryBuilder = queryBuilder
         .leftJoin('product.brand', 'brand')
         .andWhere('brand.name = :brandName', { brandName: brand });

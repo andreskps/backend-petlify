@@ -56,9 +56,12 @@ export class Product {
   })
   isNew: boolean;
 
-  
+  @Column('boolean', {
+    default: false,
+  })
+  isLowStock: boolean;
 
-  @ManyToOne(() => Subcategory, (subcategory) => subcategory.products,{
+  @ManyToOne(() => Subcategory, (subcategory) => subcategory.products, {
     onDelete: 'SET NULL',
   })
   subCategory: Subcategory;
@@ -75,14 +78,10 @@ export class Product {
   @OneToMany(() => Review, (review) => review.product)
   reviews: Review[];
 
-
-
   @OneToMany(() => ProductVariant, (productVariant) => productVariant.product)
   productVariants: ProductVariant[];
 
-
-
-  @OneToMany(() => ProductImage, productImage => productImage.product)
+  @OneToMany(() => ProductImage, (productImage) => productImage.product)
   productImages: ProductImage[];
 
   @BeforeInsert()
@@ -90,7 +89,7 @@ export class Product {
     if (!this.slug) {
       this.slug = this.title;
     }
-    this.slug = this.slug.replace(/\s+/g, '-').toLowerCase();
+    this.slug = this.slug.replace(/[^a-z0-9]+/gi, '-').toLowerCase();
   }
 
   @BeforeUpdate()
@@ -98,6 +97,6 @@ export class Product {
     if (!this.slug) {
       this.slug = this.title;
     }
-    this.slug = this.slug.replace(/\s+/g, '-').toLowerCase();
+    this.slug = this.slug.replace(/[^a-z0-9]+/gi, '-').toLowerCase();
   }
 }

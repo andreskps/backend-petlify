@@ -52,6 +52,9 @@ export class CreateProductDto {
   // @IsPositive()
   // stock: number;
 
+  @IsString()
+  slug:string;
+
   @IsNumber()
   subCategoryId: number;
 
