@@ -20,6 +20,7 @@ import { DiscountsModule } from './discounts/discounts.module';
 import { DepartamentosModule } from './departamentos/departamentos.module';
 import { MunicipiosModule } from './municipios/municipios.module';
 import { PaymentsModule } from './payments/payments.module';
+import { BannersModule } from './banners/banners.module';
 
 @Module({
   imports: [
@@ -73,6 +74,8 @@ import { PaymentsModule } from './payments/payments.module';
     MunicipiosModule,
 
     PaymentsModule,
+
+    BannersModule,
 
   ],
   controllers: [AppController],
