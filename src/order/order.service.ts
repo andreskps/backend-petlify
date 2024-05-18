@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,6 +10,7 @@ import { ProductVariant } from 'src/variants/entities/product-variant.entity';
 import { Municipio } from 'src/municipios/entities/municipio.entity';
 import { Coupon } from 'src/coupons/entities/coupon.entity';
 import { PaymentMethod } from './enums/paymentMethod.enum';
+import { OrderStatus } from './enums/orderStatus.enum';
 
 @Injectable()
 export class OrderService {
@@ -123,12 +124,44 @@ export class OrderService {
     return orders;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} order`;
+  async findOne(id: number) {
+       const order = await  this.orderRepository.createQueryBuilder('order')
+       .leftJoinAndSelect('order.orderAddress','orderAddress')
+       .leftJoinAndSelect('orderAddress.municipio','municipio')
+       .leftJoinAndSelect('order.orderItems','orderItems')
+       .leftJoinAndSelect('orderItems.productVariant','productVariant')
+
+
+       .where('order.id = :id',{id})
+
+       .getOne();
+
+
+       if(!order){
+         throw new NotFoundException(`Order #${id} not found`)
+       }
+
+       return order;
+      
   }
 
-  update(id: number, updateOrderDto: UpdateOrderDto) {
-    return `This action updates a #${id} order`;
+  async update(id: number, updateOrderDto: UpdateOrderDto) {
+    const { paymentMethod, coupon, orderStatus, ...rest } = updateOrderDto;
+    const order = await this.orderRepository.preload({
+      id: id,
+      ...rest,
+      // coupon: { code: coupon },
+    });
+
+    if (!order) {
+      throw new NotFoundException(`Order #${id} not found`);
+    }
+
+    if (orderStatus) {
+      order.orderStatus = this.getOrderStatus(orderStatus);
+    }
+
+    return await this.orderRepository.save(order);
   }
 
   remove(id: number) {
@@ -174,5 +207,19 @@ export class OrderService {
       PaymentMethod[paymentMethodKey as keyof typeof PaymentMethod];
 
     return paymentMethod;
+  }
+
+  private getOrderStatus(status: string) {
+    const orderStatusKey = Object.keys(OrderStatus).find(
+      (key) => OrderStatus[key as keyof typeof OrderStatus] === status,
+    );
+
+    if (!orderStatusKey) {
+      throw new Error(`Invalid order status: ${status}`);
+    }
+
+    const orderStatus = OrderStatus[orderStatusKey as keyof typeof OrderStatus];
+
+    return orderStatus;
   }
 }

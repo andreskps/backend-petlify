@@ -1,7 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Put } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { ValidRoles } from 'src/auth/enums/Validate-Roles.enum';
+import { Auth } from 'src/auth/decorators/auth.decorator';
 
 @Controller('orders')
 export class OrderController {
@@ -18,13 +20,14 @@ export class OrderController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id',ParseIntPipe) id: string) {
     return this.orderService.findOne(+id);
   }
  
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOrderDto: UpdateOrderDto) {
+  @Auth(ValidRoles.admin)
+  @Put(':id')
+  update(@Param('id',ParseIntPipe) id: string, @Body() updateOrderDto: UpdateOrderDto) {
     return this.orderService.update(+id, updateOrderDto);
   }
 

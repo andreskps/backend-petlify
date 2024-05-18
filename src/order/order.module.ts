@@ -8,9 +8,10 @@ import { OrderAddress } from './entities/orderAddress.entity';
 import { VariantsModule } from 'src/variants/variants.module';
 import { MunicipiosModule } from 'src/municipios/municipios.module';
 import { CouponsModule } from 'src/coupons/coupons.module';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Order,OrderItem,OrderAddress]),VariantsModule,MunicipiosModule,CouponsModule],
+  imports: [TypeOrmModule.forFeature([Order,OrderItem,OrderAddress]),VariantsModule,MunicipiosModule,CouponsModule,AuthModule],
   controllers: [OrderController],
   providers: [OrderService],
   exports:[OrderService,TypeOrmModule]

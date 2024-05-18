@@ -7,4 +7,12 @@ export class UpdateProductDto extends PartialType(CreateProductDto) {
     @IsOptional()
     @IsBoolean()
     isPopular: boolean;
+
+    @IsOptional()
+    @IsBoolean()
+    isNew:boolean
+
+    @IsOptional()
+    @IsBoolean()
+    isLowStock:boolean
 }
