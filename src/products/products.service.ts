@@ -306,7 +306,7 @@ export class ProductsService {
   }
 
   async findAllByPet(pet: string, query: QueryProductDto) {
-    const { filter, brand, subcategory,page=1,limit=3 } = query;
+    const { filter, brand, subcategory,page=1,limit=10 } = query;
 
     let queryBuilder = this.productRepository
       .createQueryBuilder('product')
@@ -355,7 +355,7 @@ export class ProductsService {
   }
 
   async findAllByCategory(slug: string, query: QueryProductDto) {
-    const { filter, pet, subcategory,page=1,limit=3 } = query;
+    const { filter, pet, subcategory,page=1,limit=10 } = query;
 
     let queryBuilder = this.productRepository
       .createQueryBuilder('product')

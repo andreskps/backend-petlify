@@ -11,6 +11,7 @@ import { Municipio } from 'src/municipios/entities/municipio.entity';
 import { Coupon } from 'src/coupons/entities/coupon.entity';
 import { PaymentMethod } from './enums/paymentMethod.enum';
 import { OrderStatus } from './enums/orderStatus.enum';
+import { OrdenDetails } from './interfaces/OrderDetails.interdace';
 
 @Injectable()
 export class OrderService {
@@ -124,26 +125,73 @@ export class OrderService {
     return orders;
   }
 
-  async findOne(id: number) {
-       const order = await  this.orderRepository.createQueryBuilder('order')
-       .leftJoinAndSelect('order.orderAddress','orderAddress')
-       .leftJoinAndSelect('orderAddress.municipio','municipio')
-       .leftJoinAndSelect('order.orderItems','orderItems')
-       .leftJoinAndSelect('orderItems.productVariant','productVariant')
-
-
-       .where('order.id = :id',{id})
-
-       .getOne();
-
-
-       if(!order){
-         throw new NotFoundException(`Order #${id} not found`)
-       }
-
-       return order;
-      
+  async findOne(id: number): Promise<OrdenDetails> {
+    const order = await this.orderRepository
+      .createQueryBuilder('order')
+      .leftJoinAndSelect('order.orderAddress', 'orderAddress')
+      .leftJoinAndSelect('orderAddress.municipio', 'municipio')
+      .leftJoinAndSelect('municipio.departamento', 'departamento')
+      .leftJoinAndSelect('order.orderItems', 'orderItems')
+      .leftJoinAndSelect('orderItems.productVariant', 'productVariant')
+      .leftJoinAndSelect('productVariant.product', 'product')
+      .leftJoinAndSelect('productVariant.option', 'option')
+      .leftJoinAndSelect('option.attribute', 'attribute')
+      .leftJoinAndSelect('product.productImages', 'productImages')
+      .where('order.id = :id', { id })
+      .getOne();
+  
+    if (!order) {
+      throw new NotFoundException(`Order #${id} not found`);
+    }
+  
+    // Mapping the order object to OrdenDetails
+    const mappedOrder: OrdenDetails = {
+      id: order.id,
+      name: order.name,
+      lastName: order.lastName,
+      phone: order.phone,
+      email: order.email,
+      namePet: order.namePet,
+      priceShipping: order.priceShipping,
+      total: order.totalAmount,
+      orderStatus: order.orderStatus,
+      paymentMethod: order.paymentMethod,
+      createdAt: order.createdDate,
+      orderAddress: {
+        address: order.orderAddress.address,
+        neighborhood: order.orderAddress.neighborhood,
+        instructions: order.orderAddress.addressDetail,
+        municipio: {
+          name: order.orderAddress.municipio.name,
+          state: {
+            name: order.orderAddress.municipio.departamento.name
+          }
+        }
+      },
+      orderItems: order.orderItems.map(item => ({
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+        productVariant: {
+          product: {
+            name: item.productVariant.product.title,
+            image: {
+              url: item.productVariant.product.productImages[0].url
+            }
+          },
+          attributes: [
+            {
+              name: item.productVariant.option.attribute.name,
+              value: item.productVariant.option.value
+            }
+          ],
+  
+        }
+      }))
+    };
+  
+    return mappedOrder;
   }
+  
 
   async update(id: number, updateOrderDto: UpdateOrderDto) {
     const { paymentMethod, coupon, orderStatus, ...rest } = updateOrderDto;

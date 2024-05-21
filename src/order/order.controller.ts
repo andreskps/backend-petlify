@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ParseIntPipe,
+  Put,
+} from '@nestjs/common';
 import { OrderService } from './order.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
@@ -14,20 +24,24 @@ export class OrderController {
     return this.orderService.createOrder(createOrderDto);
   }
 
+  @Auth(ValidRoles.admin)
   @Get()
   findAll() {
     return this.orderService.findAll();
   }
 
+  @Auth(ValidRoles.admin)
   @Get(':id')
-  findOne(@Param('id',ParseIntPipe) id: string) {
+  findOne(@Param('id', ParseIntPipe) id: string) {
     return this.orderService.findOne(+id);
   }
- 
 
   @Auth(ValidRoles.admin)
   @Put(':id')
-  update(@Param('id',ParseIntPipe) id: string, @Body() updateOrderDto: UpdateOrderDto) {
+  update(
+    @Param('id', ParseIntPipe) id: string,
+    @Body() updateOrderDto: UpdateOrderDto,
+  ) {
     return this.orderService.update(+id, updateOrderDto);
   }
 
