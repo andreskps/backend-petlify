@@ -21,12 +21,24 @@ import { DepartamentosModule } from './departamentos/departamentos.module';
 import { MunicipiosModule } from './municipios/municipios.module';
 import { PaymentsModule } from './payments/payments.module';
 import { BannersModule } from './banners/banners.module';
+import { EmailModule } from './email/email.module';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
 
-    ConfigModule.forRoot({isGlobal: true}),
-
+    MailerModule.forRoot({
+      transport: {
+        host: process.env.EMAIL_HOST,
+        port: parseInt(process.env.EMAIL_PORT),
+        secure: false,
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASSWORD,
+        },
+      },
+    }),
 
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -77,6 +89,7 @@ import { BannersModule } from './banners/banners.module';
 
     BannersModule,
 
+    EmailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

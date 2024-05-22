@@ -139,11 +139,11 @@ export class OrderService {
       .leftJoinAndSelect('product.productImages', 'productImages')
       .where('order.id = :id', { id })
       .getOne();
-  
+
     if (!order) {
       throw new NotFoundException(`Order #${id} not found`);
     }
-  
+
     // Mapping the order object to OrdenDetails
     const mappedOrder: OrdenDetails = {
       id: order.id,
@@ -164,34 +164,45 @@ export class OrderService {
         municipio: {
           name: order.orderAddress.municipio.name,
           state: {
-            name: order.orderAddress.municipio.departamento.name
-          }
-        }
+            name: order.orderAddress.municipio.departamento.name,
+          },
+        },
       },
-      orderItems: order.orderItems.map(item => ({
+      orderItems: order.orderItems.map((item) => ({
         quantity: item.quantity,
         unitPrice: item.unitPrice,
         productVariant: {
           product: {
             name: item.productVariant.product.title,
             image: {
-              url: item.productVariant.product.productImages[0].url
-            }
+              url: item.productVariant.product.productImages[0].url,
+            },
           },
           attributes: [
             {
               name: item.productVariant.option.attribute.name,
-              value: item.productVariant.option.value
-            }
+              value: item.productVariant.option.value,
+            },
           ],
-  
-        }
-      }))
+        },
+      })),
     };
-  
+
     return mappedOrder;
   }
-  
+
+  async findStatusOrder(id: number) {
+    const order = await this.orderRepository.findOne({
+      where: { id: id },
+      select: ['orderStatus'],
+    });
+
+    if (!order) {
+      throw new NotFoundException(`Order #${id} not found`);
+    }
+
+    return order;
+  }
 
   async update(id: number, updateOrderDto: UpdateOrderDto) {
     const { paymentMethod, coupon, orderStatus, ...rest } = updateOrderDto;

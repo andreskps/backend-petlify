@@ -36,6 +36,11 @@ export class OrderController {
     return this.orderService.findOne(+id);
   }
 
+  @Get('status/:id')
+  findByStatus(@Param('id',ParseIntPipe) id: string) {
+    return this.orderService.findStatusOrder(+id);
+  }
+
   @Auth(ValidRoles.admin)
   @Put(':id')
   update(
