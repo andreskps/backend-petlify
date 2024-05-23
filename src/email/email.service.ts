@@ -3,7 +3,7 @@ import { CreateEmailDto } from './dto/create-email.dto';
 import { UpdateEmailDto } from './dto/update-email.dto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { render } from '@react-email/render';
-import { OrdenDetails } from 'src/order/interfaces/OrderDetails.interdace';
+import { OrdenDetails } from 'src/order/interfaces/orderDetails.interface';
 
 
 @Injectable()

@@ -11,7 +11,7 @@ import { Municipio } from 'src/municipios/entities/municipio.entity';
 import { Coupon } from 'src/coupons/entities/coupon.entity';
 import { PaymentMethod } from './enums/paymentMethod.enum';
 import { OrderStatus } from './enums/orderStatus.enum';
-import { OrdenDetails } from './interfaces/OrderDetails.interdace';
+import { OrdenDetails } from './interfaces/orderDetails.interface';
 import { EmailService } from 'src/email/email.service';
 
 @Injectable()

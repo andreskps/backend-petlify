@@ -1,3 +1,4 @@
+import { OrdenDetails } from '../order/interfaces/orderDetails.interface';
 import {
   Button,
   Html,
@@ -8,7 +9,7 @@ import {
   Row,
   Column,
 } from '@react-email/components';
-import { OrdenDetails } from 'src/order/interfaces/OrderDetails.interdace';
+
 interface Props {
   code: string;
   name: string;

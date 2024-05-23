@@ -19,7 +19,7 @@ import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Auth } from 'src/auth/decorators/auth.decorator';
-import { ValidRoles } from 'src/auth/enums/validate-roles.enum';
+import { ValidRoles } from 'src/auth/enums/Validate-Roles.enum';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { fileFilter } from '../common/utils/fileFilter';
 import { QueryProductDto } from './dto/queries..dto';
