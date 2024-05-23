@@ -23,6 +23,7 @@ import { PaymentsModule } from './payments/payments.module';
 import { BannersModule } from './banners/banners.module';
 import { EmailModule } from './email/email.module';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { ReactAdapter } from '@webtre/nestjs-mailer-react-adapter';
 
 @Module({
   imports: [
@@ -38,6 +39,11 @@ import { MailerModule } from '@nestjs-modules/mailer';
           pass: process.env.EMAIL_PASSWORD,
         },
       },
+      template: {
+        dir: __dirname + '/templates',
+        adapter: new ReactAdapter(),
+      }
+      
     }),
 
     TypeOrmModule.forRoot({

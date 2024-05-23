@@ -2,47 +2,47 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateEmailDto } from './dto/create-email.dto';
 import { UpdateEmailDto } from './dto/update-email.dto';
 import { MailerService } from '@nestjs-modules/mailer';
+import { render } from '@react-email/render';
+import { OrdenDetails } from 'src/order/interfaces/OrderDetails.interdace';
+
 
 @Injectable()
 export class EmailService {
   constructor(private readonly mailService: MailerService) {}
 
-  async sendEmail() {
+  public async sendEmailOrder(
+    orderDetails: OrdenDetails,
+  ) {
+    
+
+    // console.log("llego al servicio de email " + orderDetails.email);
+
     try {
       const mail = await this.mailService.sendMail({
-        to: 'pipesierra146@gmail.com',
+        to: orderDetails.email,
         from: 'fernando@petlify.com',
-        subject: 'Testing Nest MailerModule ✔',
-        text: 'welcome to nest mailermodule',
+        subject: 'Detalles de tu pedido',
+        template: 'order',
+        context: {
+          name: 'Fernando',
+          code: '1234',
+          url: 'https://petlify.com',
+          orderDetails: {
+            ...orderDetails,
+            createdAt: orderDetails.createdAt.toString(),
+          },
+        }
       });
-
-
+    
       return {
         message: 'Email enviado',
         status: 200,
       };
     } catch (error) {
+      console.log(error);
       throw new InternalServerErrorException(error);
     }
   }
 
-  create(createEmailDto: CreateEmailDto) {
-    return 'This action adds a new email';
-  }
-
-  findAll() {
-    return `This action returns all email`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} email`;
-  }
-
-  update(id: number, updateEmailDto: UpdateEmailDto) {
-    return `This action updates a #${id} email`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} email`;
-  }
+  
 }

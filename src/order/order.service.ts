@@ -12,6 +12,7 @@ import { Coupon } from 'src/coupons/entities/coupon.entity';
 import { PaymentMethod } from './enums/paymentMethod.enum';
 import { OrderStatus } from './enums/orderStatus.enum';
 import { OrdenDetails } from './interfaces/OrderDetails.interdace';
+import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class OrderService {
@@ -28,6 +29,8 @@ export class OrderService {
     private municipioRepository: Repository<Municipio>,
     @InjectRepository(Coupon)
     private couponRepository: Repository<Coupon>,
+
+    private readonly emailService: EmailService,
   ) {}
 
   async createOrder(createOrderDto: CreateOrderDto) {
@@ -37,7 +40,7 @@ export class OrderService {
 
     const priceShipping = await this.calculateShippingPrice(createOrderDto);
 
-    return this.orderRepository.manager.transaction(
+    const orderSave= await this.orderRepository.manager.transaction(
       async (transactionalEntityManager) => {
         const orderItemsPromises = createOrderDto.variants.map(
           async (variant) => {
@@ -112,11 +115,29 @@ export class OrderService {
           coupon: coupon,
         });
 
-        await transactionalEntityManager.save(order);
+  
 
-        return order;
+        const orderNew = await transactionalEntityManager.save(order);
+
+      return orderNew;
+
       },
     );
+
+    const orderDetails = await this.findOne(orderSave.id);
+
+    this.emailService.sendEmailOrder(orderDetails);
+
+
+
+    return orderSave;
+
+
+
+  }
+
+  private async sendEmailOrder(orderDetails: OrdenDetails) {
+    return this.emailService.sendEmailOrder(orderDetails);
   }
 
   async findAll() {
