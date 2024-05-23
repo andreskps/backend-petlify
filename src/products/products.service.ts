@@ -129,11 +129,10 @@ export class ProductsService {
     const products = await this.productRepository.find({
       where: {
         isPopular: true,
-        isActive: true
+        isActive: true,
       },
       relations: ['productImages'],
-      take:6
-
+      take: 6,
     });
     return products;
   }
@@ -198,7 +197,6 @@ export class ProductsService {
       mappedProduct['discountId'] = product.discount.id;
     }
 
-
     return mappedProduct;
   }
 
@@ -215,9 +213,13 @@ export class ProductsService {
       ...(updateProductDto.petId
         ? { pet: { id: updateProductDto.petId } }
         : {}),
-        ...(updateProductDto.discountId !== undefined
-          ? { discount: updateProductDto.discountId ? { id: updateProductDto.discountId } : null }
-          : {}),
+      ...(updateProductDto.discountId !== undefined
+        ? {
+            discount: updateProductDto.discountId
+              ? { id: updateProductDto.discountId }
+              : null,
+          }
+        : {}),
     });
 
     if (!productUpdate) {
@@ -306,25 +308,41 @@ export class ProductsService {
   }
 
   async findAllByPet(pet: string, query: QueryProductDto) {
-    const { filter, brand, subcategory,page=1,limit=10 } = query;
+    const {
+      filter,
+      brand,
+      subcategory,
+      page = 1,
+      limit = 10,
+      category,
+    } = query;
 
     let queryBuilder = this.productRepository
       .createQueryBuilder('product')
-      .skip((page-1)*limit)
+      .skip((page - 1) * limit)
       .take(limit)
       .where('product.isActive = :isActive', { isActive: true })
       .leftJoinAndSelect('product.discount', 'discount')
       .leftJoinAndSelect('product.productImages', 'productImages')
       .leftJoinAndSelect('product.productVariants', 'productVariants')
       .leftJoin('product.pet', 'pet')
+      .leftJoin('product.subCategory', 'subCategory')
       .andWhere('pet.name = :petName', { petName: pet });
 
-    if (subcategory) {
+    if (category && category !== 'all') {
       queryBuilder = queryBuilder
-        .leftJoin('product.subCategory', 'subCategory')
-        .andWhere('subCategory.name = :subCategoryName', {
+
+        .leftJoin('subCategory.category', 'category')
+        .andWhere('category.name = :categoryName', { categoryName: category });
+    }
+
+    if (subcategory && subcategory !== 'all') {
+      queryBuilder = queryBuilder.andWhere(
+        'subCategory.name = :subCategoryName',
+        {
           subCategoryName: subcategory,
-        });
+        },
+      );
     }
 
     if (brand && brand !== 'all') {
@@ -355,11 +373,11 @@ export class ProductsService {
   }
 
   async findAllByCategory(slug: string, query: QueryProductDto) {
-    const { filter, pet, subcategory,page=1,limit=10 } = query;
+    const { filter, pet, subcategory, page = 1, limit = 10 } = query;
 
     let queryBuilder = this.productRepository
       .createQueryBuilder('product')
-      .skip((page-1)*limit)
+      .skip((page - 1) * limit)
       .take(limit)
       .where('product.isActive = :isActive', { isActive: true })
       .leftJoinAndSelect('product.productImages', 'productImages')

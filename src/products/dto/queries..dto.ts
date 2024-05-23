@@ -9,6 +9,9 @@ export class QueryProductDto {
   //   sort: string;
 
   @IsOptional()
+  category: string;
+  
+  @IsOptional()
   subcategory: string;
 
   @IsOptional()
