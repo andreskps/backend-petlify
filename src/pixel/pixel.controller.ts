@@ -10,7 +10,7 @@ import {
   Ip,
 } from '@nestjs/common';
 import { PixelService } from './pixel.service';
-import { AddToCartDto } from './dto/create-pixel.dto';
+import { AddToCartDto, EventViewContentDto } from './dto/create-pixel.dto';
 
 import { Request } from 'express';
 
@@ -29,5 +29,11 @@ export class PixelController {
   async createPurchase(@Req() request: Request,@Ip() ip:string) {
 
       return ip;
+  }
+
+  @Post('viewcontent')
+  async createViewContent(@Body() eventViewContentDto:EventViewContentDto,@Ip() ip:string,@Req() request: Request) {
+
+    return this.pixelService.eventViewContent(request,eventViewContentDto,ip);
   }
 }

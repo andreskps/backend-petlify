@@ -57,3 +57,27 @@ export class AddToCartDto {
   // @IsString()
   // test_event_code: string;
 }
+
+
+export class EventViewContentDto{
+
+  @IsNotEmpty()
+  event_id: string
+
+  // @IsNotEmpty()
+  // @IsString()
+  // event_name: string;
+  
+
+  @IsNotEmpty()
+  @IsNumber()
+  event_time: number;
+
+
+
+   @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => CustomData)
+  custom_data: CustomData;
+
+}

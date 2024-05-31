@@ -1,11 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
-import { AddToCartDto } from './dto/create-pixel.dto';
+import { AddToCartDto, EventViewContentDto } from './dto/create-pixel.dto';
 // import { CreatePixelDto } from './dto/create-pixel.dto';
 
-
-interface dataPurchase{
-
+interface dataPurchase {
   user_data: {
     client_ip_address: string;
     client_user_agent: string;
@@ -23,17 +21,19 @@ interface dataPurchase{
   };
 }
 
-
-
 @Injectable()
 export class PixelService {
   // create(createPixelDto: CreatePixelDto) {
   //   return 'This action adds a new pixel';
   // }
 
-  async eventAddToCart(request: Request, addTocartDto: AddToCartDto,ip:string) {
+  async eventAddToCart(
+    request: Request,
+    addTocartDto: AddToCartDto,
+    ip: string,
+  ) {
     const apikey = process.env.API_KEY_PIXEL;
-  
+
     const response = await fetch(
       `https://graph.facebook.com/v20.0/1116424846318536/events?access_token=${apikey}`,
       {
@@ -51,7 +51,6 @@ export class PixelService {
               user_data: {
                 client_ip_address: ip,
                 client_user_agent: request.headers['user-agent'],
-
               },
               custom_data: {
                 currency: addTocartDto.custom_data.currency,
@@ -61,15 +60,14 @@ export class PixelService {
               },
             },
           ],
-          test_event_code: 'TEST24204',
+          test_event_code: 'TEST35014',
         }),
       },
     );
   }
 
-  async eventPurchase(dataPurchase:dataPurchase) {
+  async eventPurchase(dataPurchase: dataPurchase) {
     const apikey = process.env.API_KEY_PIXEL;
-  
 
     const response = await fetch(
       `https://graph.facebook.com/v20.0/1116424846318536/events?access_token=${apikey}`,
@@ -92,26 +90,56 @@ export class PixelService {
                 fn: dataPurchase.user_data.fn,
                 ph: dataPurchase.user_data.ph,
                 ln: dataPurchase.user_data.ln,
-              
               },
               custom_data: {
                 currency: dataPurchase.custom_data.currency,
                 value: dataPurchase.custom_data.value,
                 content_name: dataPurchase.custom_data.content_name,
                 content_ids: dataPurchase.custom_data.content_ids,
-                contents: dataPurchase.custom_data.contents
+                contents: dataPurchase.custom_data.contents,
               },
             },
           ],
-          test_event_code: 'TEST24204',
+          test_event_code: 'TEST35014',
         }),
       },
     );
 
     const result = await response.json();
-    
-    return  result;
+
+    return result;
   }
 
- 
+  async eventViewContent(
+    request: Request,
+    eventViewContentDto: EventViewContentDto,
+    ip: string,
+  ) {
+    const apikey = process.env.API_KEY_PIXEL;
+
+    const response = await fetch(
+      `https://graph.facebook.com/v20.0/1116424846318536/events?access_token=${apikey}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          data: [
+            {
+              action_source: 'website',
+              event_id: eventViewContentDto.event_id.toString(),
+              event_name: 'ViewContent',
+              event_time: eventViewContentDto.event_time, 
+              user_data: {
+                client_ip_address: ip,
+                client_user_agent: request.headers['user-agent'],
+              },
+            },
+          ],
+          test_event_code: 'TEST35014',
+        }),
+      },
+    );
+  }
 }
