@@ -24,6 +24,7 @@ import { BannersModule } from './banners/banners.module';
 import { EmailModule } from './email/email.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ReactAdapter } from '@webtre/nestjs-mailer-react-adapter';
+import { PixelModule } from './pixel/pixel.module';
 
 @Module({
   imports: [
@@ -96,6 +97,8 @@ import { ReactAdapter } from '@webtre/nestjs-mailer-react-adapter';
     BannersModule,
 
     EmailModule,
+
+    PixelModule,
   ],
   controllers: [AppController],
   providers: [AppService],

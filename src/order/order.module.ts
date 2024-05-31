@@ -10,9 +10,10 @@ import { MunicipiosModule } from 'src/municipios/municipios.module';
 import { CouponsModule } from 'src/coupons/coupons.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { EmailModule } from 'src/email/email.module';
+import { PixelModule } from 'src/pixel/pixel.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Order,OrderItem,OrderAddress]),VariantsModule,MunicipiosModule,CouponsModule,AuthModule,EmailModule],
+  imports: [TypeOrmModule.forFeature([Order,OrderItem,OrderAddress]),VariantsModule,MunicipiosModule,CouponsModule,AuthModule,EmailModule,PixelModule],
   controllers: [OrderController],
   providers: [OrderService],
   exports:[OrderService,TypeOrmModule]

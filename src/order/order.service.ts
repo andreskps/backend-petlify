@@ -13,7 +13,9 @@ import { PaymentMethod } from './enums/paymentMethod.enum';
 import { OrderStatus } from './enums/orderStatus.enum';
 import { OrdenDetails } from './interfaces/orderDetails.interface';
 import { EmailService } from 'src/email/email.service';
-
+import { Request } from 'express';
+import { PixelService } from '../pixel/pixel.service';
+import * as crypto from 'crypto';
 @Injectable()
 export class OrderService {
   constructor(
@@ -31,16 +33,18 @@ export class OrderService {
     private couponRepository: Repository<Coupon>,
 
     private readonly emailService: EmailService,
+    private readonly pixelService: PixelService,
   ) {}
 
-  async createOrder(createOrderDto: CreateOrderDto) {
+  async createOrder(createOrderDto: CreateOrderDto, req: Request, ip: string) {
     const { address } = createOrderDto;
 
+    
     let subtotal = 0;
 
     const priceShipping = await this.calculateShippingPrice(createOrderDto);
 
-    const orderSave= await this.orderRepository.manager.transaction(
+    const orderSave = await this.orderRepository.manager.transaction(
       async (transactionalEntityManager) => {
         const orderItemsPromises = createOrderDto.variants.map(
           async (variant) => {
@@ -115,30 +119,44 @@ export class OrderService {
           coupon: coupon,
         });
 
-  
-
         const orderNew = await transactionalEntityManager.save(order);
 
-      return orderNew;
-
+        return orderNew;
       },
     );
+
+    // Trigger the pixel event
+    this.pixelService.eventPurchase({
+      user_data: {
+        client_ip_address: ip,
+        client_user_agent: req.headers['user-agent'],
+        em: [crypto.createHash('sha256').update(orderSave.email).digest('hex')],
+        fn: crypto.createHash('sha256').update(orderSave.name).digest('hex'),
+        ph: crypto.createHash('sha256').update("57"+orderSave.phone).digest('hex'),
+        ln: crypto.createHash('sha256').update(orderSave.lastName).digest('hex'),
+
+      },
+      custom_data: {
+        currency: 'COP',
+        value: subtotal,
+        content_name: 'Compra',
+        content_ids: orderSave.orderItems.map((item) =>
+          item.productVariant.id.toString(),
+        ),
+        contents: orderSave.orderItems.map((item) => ({
+          id: item.productVariant.id.toString(),
+          quantity: item.quantity,
+        })),
+      },
+    });
 
     const orderDetails = await this.findOne(orderSave.id);
 
     this.emailService.sendEmailOrder(orderDetails);
 
-
-
     return orderSave;
-
-
-
   }
 
-  private async sendEmailOrder(orderDetails: OrdenDetails) {
-    return this.emailService.sendEmailOrder(orderDetails);
-  }
 
   async findAll() {
     const orders = await this.orderRepository.find();
