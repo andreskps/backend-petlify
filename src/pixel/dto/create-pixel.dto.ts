@@ -1,4 +1,4 @@
-import { IsArray, IsNotEmpty, IsNumber, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 
 class UserData {
@@ -9,6 +9,12 @@ class UserData {
   // @IsNotEmpty()
   // @IsString()
   // client_user_agent: string;
+  @IsOptional()
+  @IsString()
+  fbp: string;
+
+
+
 
 }
 
@@ -80,4 +86,33 @@ export class EventViewContentDto{
   @Type(() => CustomData)
   custom_data: CustomData;
 
+}
+
+
+export class EventInitiateCheckoutDto{
+  
+    @IsNotEmpty()
+    event_id: string
+  
+    // @IsNotEmpty()
+    // @IsString()
+    // event_name: string;
+    
+  
+    @IsNotEmpty()
+    @IsNumber()
+    event_time: number;
+  
+    @ValidateNested()
+    @Type(() => UserData)
+    user_data: UserData;
+  
+    @IsNotEmpty()
+    @ValidateNested()
+    @Type(() => CustomData)
+    custom_data: CustomData;
+  
+    // @IsNotEmpty()
+    // @IsString()
+    // test_event_code: string;
 }

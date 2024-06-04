@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
-import { AddToCartDto, EventViewContentDto } from './dto/create-pixel.dto';
+import { AddToCartDto, EventViewContentDto, EventInitiateCheckoutDto } from './dto/create-pixel.dto';
 // import { CreatePixelDto } from './dto/create-pixel.dto';
+import * as crypto from 'crypto';
 
 interface dataPurchase {
   user_data: {
@@ -60,7 +61,7 @@ export class PixelService {
               },
             },
           ],
-          test_event_code: 'TEST35014',
+          test_event_code: 'TEST53559',
         }),
       },
     );
@@ -80,7 +81,7 @@ export class PixelService {
           data: [
             {
               action_source: 'website',
-              event_id: '4541',
+              event_id: crypto.randomUUID(),
               event_name: 'Purchase',
               event_time: Math.floor(Date.now() / 1000),
               user_data: {
@@ -100,7 +101,7 @@ export class PixelService {
               },
             },
           ],
-          test_event_code: 'TEST35014',
+          test_event_code: 'TEST53559',
         }),
       },
     );
@@ -137,7 +138,43 @@ export class PixelService {
               },
             },
           ],
-          test_event_code: 'TEST35014',
+          test_event_code: 'TEST53559',
+        }),
+      },
+    );
+  }
+
+  async eventInitiateCheckout(eventInitiateCheckoutDto: EventInitiateCheckoutDto,request: Request,ip:string) {
+    const apikey = process.env.API_KEY_PIXEL;
+
+    const response = await fetch(
+      `https://graph.facebook.com/v20.0/1116424846318536/events?access_token=${apikey}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          data: [
+            {
+              action_source: 'website',
+              event_id: eventInitiateCheckoutDto.event_id,
+              event_name: 'InitiateCheckout',
+              event_time: Math.floor(Date.now() / 1000),
+              user_data: {
+                client_ip_address: ip,
+                client_user_agent: request.headers['user-agent'],
+                fbp: eventInitiateCheckoutDto.user_data.fbp,
+              },
+              custom_data: {
+                currency: eventInitiateCheckoutDto.custom_data.currency,
+                value: eventInitiateCheckoutDto.custom_data.value,
+                content_name: eventInitiateCheckoutDto.custom_data.content_name,
+                content_ids: eventInitiateCheckoutDto.custom_data.content_ids,
+              },
+            },
+          ],
+          test_event_code: 'TEST53559',
         }),
       },
     );
