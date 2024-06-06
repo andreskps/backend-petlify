@@ -18,6 +18,17 @@ class VariantsDto {
   quantity: number;
 }
 
+
+class UserDataPixelDto {
+  @IsOptional()
+  @IsString()
+  fbp: string;
+
+  @IsOptional()
+  @IsString()
+  fbc: string;
+}
+
 class AddressDto {
   @IsString()
   address: string;
@@ -63,7 +74,17 @@ export class CreateOrderDto {
   @Type(() => AddressDto)
   address: AddressDto;
 
+  
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => UserDataPixelDto)
+  user_data: UserDataPixelDto;
+
+
+
   @IsOptional()
   @IsString()
   coupon: string;
 }
+
+

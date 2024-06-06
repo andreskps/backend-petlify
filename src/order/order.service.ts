@@ -134,7 +134,7 @@ export class OrderService {
         fn: crypto.createHash('sha256').update(orderSave.name).digest('hex'),
         ph: crypto.createHash('sha256').update("57"+orderSave.phone).digest('hex'),
         ln: crypto.createHash('sha256').update(orderSave.lastName).digest('hex'),
-
+        fbp: createOrderDto.user_data.fbp,
       },
       custom_data: {
         currency: 'COP',

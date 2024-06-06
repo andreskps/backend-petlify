@@ -12,6 +12,7 @@ interface dataPurchase {
     fn: string;
     ph: string;
     ln: string;
+    fbp: string;
   };
   custom_data: {
     currency: string;
@@ -91,6 +92,7 @@ export class PixelService {
                 fn: dataPurchase.user_data.fn,
                 ph: dataPurchase.user_data.ph,
                 ln: dataPurchase.user_data.ln,
+                fbp: dataPurchase.user_data.fbp,
               },
               custom_data: {
                 currency: dataPurchase.custom_data.currency,
