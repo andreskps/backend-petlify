@@ -157,6 +157,7 @@ export class ProductsService {
       .leftJoinAndSelect('product.brand', 'brand')
       .leftJoinAndSelect('product.discount', 'discount')
       .leftJoinAndSelect('product.pet', 'pet')
+      .leftJoinAndSelect('product.provider', 'provider')
       .leftJoinAndSelect(
         'product.productVariants',
         'productVariants',
@@ -192,6 +193,11 @@ export class ProductsService {
       images: product.productImages,
     };
 
+    if (product.provider) {
+      mappedProduct['providerId'] = product.provider.id;
+    }
+    
+    
     if (product.brand) {
       mappedProduct['brandId'] = product.brand.id;
     }
@@ -220,6 +226,13 @@ export class ProductsService {
         ? {
             discount: updateProductDto.discountId
               ? { id: updateProductDto.discountId }
+              : null,
+          }
+        : {}),
+        ...(updateProductDto.providerId !== undefined
+        ? {
+            provider: updateProductDto.providerId
+              ? { id: updateProductDto.providerId }
               : null,
           }
         : {}),
@@ -284,6 +297,7 @@ export class ProductsService {
       categoryId: product.subCategory.category.id,
       subCategoryId: product.subCategory.id,
       petId: product.pet ? product.pet.id : null,
+      providerId: product.provider ? product.provider.id : null,
       description: product.description,
       slug: product.slug,
       isActive: product.isActive,
