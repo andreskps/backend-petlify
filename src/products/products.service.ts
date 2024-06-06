@@ -46,6 +46,9 @@ export class ProductsService {
       ...(createProductDto.discountId
         ? { discount: { id: createProductDto.discountId } }
         : {}),
+        ...(createProductDto.providerId
+        ? { provider: { id: createProductDto.providerId } }
+        : {}),
     });
     const savedProduct = await this.productRepository.save(product);
 
