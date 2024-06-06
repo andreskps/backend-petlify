@@ -25,6 +25,7 @@ import { EmailModule } from './email/email.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ReactAdapter } from '@webtre/nestjs-mailer-react-adapter';
 import { PixelModule } from './pixel/pixel.module';
+import { ProvidersModule } from './providers/providers.module';
 
 @Module({
   imports: [
@@ -99,6 +100,8 @@ import { PixelModule } from './pixel/pixel.module';
     EmailModule,
 
     PixelModule,
+
+    ProvidersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
