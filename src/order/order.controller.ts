@@ -24,7 +24,7 @@ export class OrderController {
 
   @Post()
   create(@Body() createOrderDto: CreateOrderDto, @Req() req: Request,@Ip() ip: string,){
-    console.log(ip)
+    
     return this.orderService.createOrder(createOrderDto, req,ip);
   }
 

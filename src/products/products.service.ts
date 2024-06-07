@@ -90,7 +90,6 @@ export class ProductsService {
   findAll(query: QueryProductDto) {
     const { filter, brand, subcategory } = query;
 
-    console.log(query);
     let queryBuilder = this.productRepository
       .createQueryBuilder('product')
       .where('product.isActive = :isActive', { isActive: true });
@@ -196,7 +195,7 @@ export class ProductsService {
     if (product.provider) {
       mappedProduct['providerId'] = product.provider.id;
     }
-    
+
     
     if (product.brand) {
       mappedProduct['brandId'] = product.brand.id;
@@ -334,6 +333,8 @@ export class ProductsService {
       category,
     } = query;
 
+  
+
     let queryBuilder = this.productRepository
       .createQueryBuilder('product')
       .skip((page - 1) * limit)
@@ -369,17 +370,21 @@ export class ProductsService {
     }
 
     if (filter) {
-      if (filter === 'isPopular') {
+      if (filter === 'popular') {
         queryBuilder = queryBuilder.andWhere('product.isPopular = :isPopular', {
           isPopular: true,
         });
-      } else if (filter === 'IsNew') {
-        // Aquí puedes agregar la lógica para filtrar por 'IsNew'
-      } else if (filter === 'All') {
+      } else if (filter === 'new') {
+         queryBuilder = queryBuilder.andWhere('product.isNew = :isNew', {
+          isNew: true,
+        });
+      } else if (filter === 'all') {
         // Aquí puedes agregar la lógica para filtrar por 'All'
+        
       }
     }
 
+    queryBuilder = queryBuilder.orderBy('product.isPopular', 'DESC');
     const products = await queryBuilder.getMany();
     const total = await queryBuilder.getCount();
 
@@ -392,6 +397,7 @@ export class ProductsService {
   async findAllByCategory(slug: string, query: QueryProductDto) {
     const { filter, pet, subcategory, page = 1, limit = 10 } = query;
 
+  
     let queryBuilder = this.productRepository
       .createQueryBuilder('product')
       .skip((page - 1) * limit)
@@ -420,17 +426,21 @@ export class ProductsService {
     }
 
     if (filter) {
-      if (filter === 'isPopular') {
+      if (filter === 'popular') {
         queryBuilder = queryBuilder.andWhere('product.isPopular = :isPopular', {
           isPopular: true,
         });
-      } else if (filter === 'IsNew') {
-        // Aquí puedes agregar la lógica para filtrar por 'IsNew'
-      } else if (filter === 'All') {
+      } else if (filter === 'new') {
+         queryBuilder = queryBuilder.andWhere('product.isNew = :isNew', {
+          isNew: true,
+         })
+        
+      } else if (filter === 'all') {
         // Aquí puedes agregar la lógica para filtrar por 'All'
       }
     }
 
+    queryBuilder = queryBuilder.orderBy('product.isPopular', 'DESC');
     const products = await queryBuilder.getMany();
     const total = await queryBuilder.getCount();
 

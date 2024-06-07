@@ -62,7 +62,7 @@ export class PixelService {
               },
             },
           ],
-          test_event_code: 'TEST53559',
+          test_event_code: 'TEST4979',
         }),
       },
     );
@@ -103,7 +103,7 @@ export class PixelService {
               },
             },
           ],
-          test_event_code: 'TEST53559',
+          test_event_code: 'TEST4979',
         }),
       },
     );
@@ -140,7 +140,7 @@ export class PixelService {
               },
             },
           ],
-          test_event_code: 'TEST53559',
+          test_event_code: 'TEST4979',
         }),
       },
     );
@@ -176,7 +176,7 @@ export class PixelService {
               },
             },
           ],
-          test_event_code: 'TEST53559',
+          test_event_code: 'TEST4979',
         }),
       },
     );

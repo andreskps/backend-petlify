@@ -2,7 +2,6 @@ import { IsOptional, IsIn, IsNumber } from 'class-validator';
 
 export class QueryProductDto {
   @IsOptional()
-  @IsIn(['isPopular', 'isNew'])
   filter: string;
 
   //   @IsOptional()
