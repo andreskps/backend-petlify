@@ -14,6 +14,7 @@ import { Pet } from 'src/pet/entities/pet.entity';
 import { Review } from 'src/review/entities/review.entity';
 import { ProductImage } from './ProductImage';
 import { Discount } from 'src/discounts/entities/discount.entity';
+import { Provider } from 'src/providers/entities/provider.entity';
 
 @Entity()
 export class Product {
@@ -68,6 +69,9 @@ export class Product {
 
   @ManyToOne(() => Brand, (brand) => brand.products)
   brand: Brand;
+
+  @ManyToOne(() => Provider, (provider) => provider.products)
+  provider: Provider;
 
   @ManyToOne(() => Pet, (pet) => pet.products)
   pet: Pet;

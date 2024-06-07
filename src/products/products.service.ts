@@ -46,6 +46,9 @@ export class ProductsService {
       ...(createProductDto.discountId
         ? { discount: { id: createProductDto.discountId } }
         : {}),
+        ...(createProductDto.providerId
+        ? { provider: { id: createProductDto.providerId } }
+        : {}),
     });
     const savedProduct = await this.productRepository.save(product);
 
@@ -87,7 +90,6 @@ export class ProductsService {
   findAll(query: QueryProductDto) {
     const { filter, brand, subcategory } = query;
 
-    console.log(query);
     let queryBuilder = this.productRepository
       .createQueryBuilder('product')
       .where('product.isActive = :isActive', { isActive: true });
@@ -154,6 +156,7 @@ export class ProductsService {
       .leftJoinAndSelect('product.brand', 'brand')
       .leftJoinAndSelect('product.discount', 'discount')
       .leftJoinAndSelect('product.pet', 'pet')
+      .leftJoinAndSelect('product.provider', 'provider')
       .leftJoinAndSelect(
         'product.productVariants',
         'productVariants',
@@ -189,6 +192,11 @@ export class ProductsService {
       images: product.productImages,
     };
 
+    if (product.provider) {
+      mappedProduct['providerId'] = product.provider.id;
+    }
+
+    
     if (product.brand) {
       mappedProduct['brandId'] = product.brand.id;
     }
@@ -217,6 +225,13 @@ export class ProductsService {
         ? {
             discount: updateProductDto.discountId
               ? { id: updateProductDto.discountId }
+              : null,
+          }
+        : {}),
+        ...(updateProductDto.providerId !== undefined
+        ? {
+            provider: updateProductDto.providerId
+              ? { id: updateProductDto.providerId }
               : null,
           }
         : {}),
@@ -281,6 +296,7 @@ export class ProductsService {
       categoryId: product.subCategory.category.id,
       subCategoryId: product.subCategory.id,
       petId: product.pet ? product.pet.id : null,
+      providerId: product.provider ? product.provider.id : null,
       description: product.description,
       slug: product.slug,
       isActive: product.isActive,
@@ -317,6 +333,8 @@ export class ProductsService {
       category,
     } = query;
 
+  
+
     let queryBuilder = this.productRepository
       .createQueryBuilder('product')
       .skip((page - 1) * limit)
@@ -352,17 +370,21 @@ export class ProductsService {
     }
 
     if (filter) {
-      if (filter === 'isPopular') {
+      if (filter === 'popular') {
         queryBuilder = queryBuilder.andWhere('product.isPopular = :isPopular', {
           isPopular: true,
         });
-      } else if (filter === 'IsNew') {
-        // Aquí puedes agregar la lógica para filtrar por 'IsNew'
-      } else if (filter === 'All') {
+      } else if (filter === 'new') {
+         queryBuilder = queryBuilder.andWhere('product.isNew = :isNew', {
+          isNew: true,
+        });
+      } else if (filter === 'all') {
         // Aquí puedes agregar la lógica para filtrar por 'All'
+        
       }
     }
 
+    queryBuilder = queryBuilder.orderBy('product.isPopular', 'DESC');
     const products = await queryBuilder.getMany();
     const total = await queryBuilder.getCount();
 
@@ -375,6 +397,7 @@ export class ProductsService {
   async findAllByCategory(slug: string, query: QueryProductDto) {
     const { filter, pet, subcategory, page = 1, limit = 10 } = query;
 
+  
     let queryBuilder = this.productRepository
       .createQueryBuilder('product')
       .skip((page - 1) * limit)
@@ -403,17 +426,21 @@ export class ProductsService {
     }
 
     if (filter) {
-      if (filter === 'isPopular') {
+      if (filter === 'popular') {
         queryBuilder = queryBuilder.andWhere('product.isPopular = :isPopular', {
           isPopular: true,
         });
-      } else if (filter === 'IsNew') {
-        // Aquí puedes agregar la lógica para filtrar por 'IsNew'
-      } else if (filter === 'All') {
+      } else if (filter === 'new') {
+         queryBuilder = queryBuilder.andWhere('product.isNew = :isNew', {
+          isNew: true,
+         })
+        
+      } else if (filter === 'all') {
         // Aquí puedes agregar la lógica para filtrar por 'All'
       }
     }
 
+    queryBuilder = queryBuilder.orderBy('product.isPopular', 'DESC');
     const products = await queryBuilder.getMany();
     const total = await queryBuilder.getCount();
 
