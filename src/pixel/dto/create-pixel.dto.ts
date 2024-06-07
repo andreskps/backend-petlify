@@ -13,6 +13,10 @@ class UserData {
   @IsString()
   fbp: string;
 
+  @IsOptional()
+  @IsString()
+  fbc: string;
+
 
 
 

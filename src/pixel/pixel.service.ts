@@ -47,12 +47,14 @@ export class PixelService {
           data: [
             {
               action_source: 'website',
-              event_id: addTocartDto.event_id.toString(),
+              event_id: addTocartDto.event_id,
               event_name: 'AddToCart',
               event_time: addTocartDto.event_time,
               user_data: {
                 client_ip_address: ip,
                 client_user_agent: request.headers['user-agent'],
+                fbp: addTocartDto.user_data.fbp,
+                fbc: addTocartDto.user_data.fbc,
               },
               custom_data: {
                 currency: addTocartDto.custom_data.currency,
@@ -148,7 +150,7 @@ export class PixelService {
 
   async eventInitiateCheckout(eventInitiateCheckoutDto: EventInitiateCheckoutDto,request: Request,ip:string) {
     const apikey = process.env.API_KEY_PIXEL;
-
+console.log(eventInitiateCheckoutDto.user_data.fbc)
     const response = await fetch(
       `https://graph.facebook.com/v20.0/1116424846318536/events?access_token=${apikey}`,
       {
@@ -167,6 +169,7 @@ export class PixelService {
                 client_ip_address: ip,
                 client_user_agent: request.headers['user-agent'],
                 fbp: eventInitiateCheckoutDto.user_data.fbp,
+                fbc: eventInitiateCheckoutDto.user_data.fbc,
               },
               custom_data: {
                 currency: eventInitiateCheckoutDto.custom_data.currency,
