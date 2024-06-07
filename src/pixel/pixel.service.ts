@@ -70,56 +70,65 @@ export class PixelService {
               },
             },
           ],
-          test_event_code: 'TEST4979',
+          test_event_code: process.env.TEST_EVENT,
         }),
       },
     );
   }
 
+ 
   async eventPurchase(dataPurchase: dataPurchase) {
-    const apikey = process.env.API_KEY_PIXEL;
-
-    const response = await fetch(
-      `https://graph.facebook.com/v20.0/1116424846318536/events?access_token=${apikey}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+    try {
+      const apikey = process.env.API_KEY_PIXEL;
+  
+      const response = await fetch(
+        `https://graph.facebook.com/v20.0/1116424846318536/events?access_token=${apikey}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            data: [
+              {
+                action_source: 'website',
+                event_id: crypto.randomUUID(),
+                event_name: 'Purchase',
+                event_time: Math.floor(Date.now() / 1000),
+                user_data: {
+                  client_ip_address: dataPurchase.user_data.client_ip_address,
+                  client_user_agent: dataPurchase.user_data.client_user_agent,
+                  em: dataPurchase.user_data.em,
+                  fn: dataPurchase.user_data.fn,
+                  ph: dataPurchase.user_data.ph,
+                  ln: dataPurchase.user_data.ln,
+                  fbp: dataPurchase.user_data.fbp,
+                  fbc: dataPurchase.user_data.fbc,
+                },
+                custom_data: {
+                  currency: dataPurchase.custom_data.currency,
+                  value: dataPurchase.custom_data.value,
+                  content_name: dataPurchase.custom_data.content_name,
+                  content_ids: dataPurchase.custom_data.content_ids,
+                  contents: dataPurchase.custom_data.contents,
+                },
+              },
+            ],
+            test_event_code: process.env.TEST_EVENT,
+          }),
         },
-        body: JSON.stringify({
-          data: [
-            {
-              action_source: 'website',
-              event_id: crypto.randomUUID(),
-              event_name: 'Purchase',
-              event_time: Math.floor(Date.now() / 1000),
-              user_data: {
-                client_ip_address: dataPurchase.user_data.client_ip_address,
-                client_user_agent: dataPurchase.user_data.client_user_agent,
-                em: dataPurchase.user_data.em,
-                fn: dataPurchase.user_data.fn,
-                ph: dataPurchase.user_data.ph,
-                ln: dataPurchase.user_data.ln,
-                fbp: dataPurchase.user_data.fbp,
-                // fbc: dataPurchase.user_data.fbc,
-              },
-              custom_data: {
-                currency: dataPurchase.custom_data.currency,
-                value: dataPurchase.custom_data.value,
-                content_name: dataPurchase.custom_data.content_name,
-                content_ids: dataPurchase.custom_data.content_ids,
-                contents: dataPurchase.custom_data.contents,
-              },
-            },
-          ],
-          test_event_code: 'TEST4979',
-        }),
-      },
-    );
-
-    const result = await response.json();
-
-    return result;
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const result = await response.json();
+  
+      return result;
+    } catch (error) {
+      console.error('An error occurred:', error);
+      return { error: 'An error occurred while processing your request.' };
+    }
   }
 
   async eventViewContent(
@@ -157,7 +166,7 @@ export class PixelService {
               }
             },
           ],
-          test_event_code: 'TEST4979',
+          test_event_code: process.env.TEST_EVENT,
         }),
       },
     );
@@ -198,7 +207,7 @@ export class PixelService {
               },
             },
           ],
-          test_event_code: 'TEST4979',
+          test_event_code: process.env.TEST_EVENT,
         }),
       },
     );

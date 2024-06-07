@@ -13,7 +13,7 @@ async function bootstrap() {
 
   const corsOptions: CorsOptions = {
     origin: (origin, callback) => {
-      console.log('Origin:', origin);
+      // console.log('Origin:', origin);
       if (!origin || allowedOrigins.indexOf(origin) !== -1) {
         callback(null, true);
       } else {
