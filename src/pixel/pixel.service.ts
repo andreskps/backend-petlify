@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
-import { AddToCartDto, EventViewContentDto, EventInitiateCheckoutDto } from './dto/create-pixel.dto';
+import {
+  AddToCartDto,
+  EventViewContentDto,
+  EventInitiateCheckoutDto,
+} from './dto/create-pixel.dto';
 // import { CreatePixelDto } from './dto/create-pixel.dto';
 import * as crypto from 'crypto';
 
@@ -13,6 +17,7 @@ interface dataPurchase {
     ph: string;
     ln: string;
     fbp: string;
+    fbc: string;
   };
   custom_data: {
     currency: string;
@@ -35,6 +40,7 @@ export class PixelService {
     ip: string,
   ) {
     const apikey = process.env.API_KEY_PIXEL;
+   
 
     const response = await fetch(
       `https://graph.facebook.com/v20.0/1116424846318536/events?access_token=${apikey}`,
@@ -51,7 +57,7 @@ export class PixelService {
               event_name: 'AddToCart',
               event_time: addTocartDto.event_time,
               user_data: {
-                client_ip_address: ip,
+                client_ip_address: ip === '::1' ? '127.0.0.1' : ip,
                 client_user_agent: request.headers['user-agent'],
                 fbp: addTocartDto.user_data.fbp,
                 fbc: addTocartDto.user_data.fbc,
@@ -95,6 +101,7 @@ export class PixelService {
                 ph: dataPurchase.user_data.ph,
                 ln: dataPurchase.user_data.ln,
                 fbp: dataPurchase.user_data.fbp,
+                // fbc: dataPurchase.user_data.fbc,
               },
               custom_data: {
                 currency: dataPurchase.custom_data.currency,
@@ -135,11 +142,19 @@ export class PixelService {
               action_source: 'website',
               event_id: eventViewContentDto.event_id.toString(),
               event_name: 'ViewContent',
-              event_time: eventViewContentDto.event_time, 
+              event_time: eventViewContentDto.event_time,
               user_data: {
                 client_ip_address: ip,
                 client_user_agent: request.headers['user-agent'],
+                fbp: eventViewContentDto.user_data.fbp,
+                fbc: eventViewContentDto.user_data.fbc,
               },
+              custom_data: {
+                currency: eventViewContentDto.custom_data.currency,
+                value: eventViewContentDto.custom_data.value,
+                content_name: eventViewContentDto.custom_data.content_name,
+                content_ids: eventViewContentDto.custom_data.content_ids,
+              }
             },
           ],
           test_event_code: 'TEST4979',
@@ -148,9 +163,13 @@ export class PixelService {
     );
   }
 
-  async eventInitiateCheckout(eventInitiateCheckoutDto: EventInitiateCheckoutDto,request: Request,ip:string) {
+  async eventInitiateCheckout(
+    eventInitiateCheckoutDto: EventInitiateCheckoutDto,
+    request: Request,
+    ip: string,
+  ) {
     const apikey = process.env.API_KEY_PIXEL;
-console.log(eventInitiateCheckoutDto.user_data.fbc)
+    console.log(eventInitiateCheckoutDto.user_data.fbc);
     const response = await fetch(
       `https://graph.facebook.com/v20.0/1116424846318536/events?access_token=${apikey}`,
       {

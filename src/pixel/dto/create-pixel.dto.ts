@@ -1,4 +1,11 @@
-import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+  IsArray,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 class UserData {
@@ -16,10 +23,6 @@ class UserData {
   @IsOptional()
   @IsString()
   fbc: string;
-
-
-
-
 }
 
 class CustomData {
@@ -40,15 +43,12 @@ class CustomData {
 }
 
 export class AddToCartDto {
- 
-
   @IsNotEmpty()
-  event_id: string
+  event_id: string;
 
   // @IsNotEmpty()
   // @IsString()
   // event_name: string;
-  
 
   @IsNotEmpty()
   @IsNumber()
@@ -58,7 +58,7 @@ export class AddToCartDto {
   @Type(() => UserData)
   user_data: UserData;
 
-   @IsNotEmpty()
+  @IsNotEmpty()
   @ValidateNested()
   @Type(() => CustomData)
   custom_data: CustomData;
@@ -68,55 +68,46 @@ export class AddToCartDto {
   // test_event_code: string;
 }
 
-
-export class EventViewContentDto{
-
+export class EventViewContentDto {
   @IsNotEmpty()
-  event_id: string
-
-  // @IsNotEmpty()
-  // @IsString()
-  // event_name: string;
-  
+  event_id: string;
 
   @IsNotEmpty()
   @IsNumber()
   event_time: number;
 
-
-
-   @IsNotEmpty()
+  @IsNotEmpty()
   @ValidateNested()
   @Type(() => CustomData)
   custom_data: CustomData;
 
+  @ValidateNested()
+  @Type(() => UserData)
+  user_data: UserData;
 }
 
+export class EventInitiateCheckoutDto {
+  @IsNotEmpty()
+  event_id: string;
 
-export class EventInitiateCheckoutDto{
-  
-    @IsNotEmpty()
-    event_id: string
-  
-    // @IsNotEmpty()
-    // @IsString()
-    // event_name: string;
-    
-  
-    @IsNotEmpty()
-    @IsNumber()
-    event_time: number;
-  
-    @ValidateNested()
-    @Type(() => UserData)
-    user_data: UserData;
-  
-    @IsNotEmpty()
-    @ValidateNested()
-    @Type(() => CustomData)
-    custom_data: CustomData;
-  
-    // @IsNotEmpty()
-    // @IsString()
-    // test_event_code: string;
+  // @IsNotEmpty()
+  // @IsString()
+  // event_name: string;
+
+  @IsNotEmpty()
+  @IsNumber()
+  event_time: number;
+
+  @ValidateNested()
+  @Type(() => UserData)
+  user_data: UserData;
+
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => CustomData)
+  custom_data: CustomData;
+
+  // @IsNotEmpty()
+  // @IsString()
+  // test_event_code: string;
 }
