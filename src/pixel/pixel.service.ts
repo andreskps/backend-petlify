@@ -43,7 +43,7 @@ export class PixelService {
    
 
     const response = await fetch(
-      `https://graph.facebook.com/v20.0/1116424846318536/events?access_token=${apikey}`,
+      `https://graph.facebook.com/v20.0/393021893749837/events?access_token=${apikey}`,
       {
         method: 'POST',
         headers: {
@@ -82,7 +82,7 @@ export class PixelService {
       const apikey = process.env.API_KEY_PIXEL;
   
       const response = await fetch(
-        `https://graph.facebook.com/v20.0/1116424846318536/events?access_token=${apikey}`,
+        `https://graph.facebook.com/v20.0/393021893749837/events?access_token=${apikey}`,
         {
           method: 'POST',
           headers: {
@@ -139,7 +139,7 @@ export class PixelService {
     const apikey = process.env.API_KEY_PIXEL;
 
     const response = await fetch(
-      `https://graph.facebook.com/v20.0/1116424846318536/events?access_token=${apikey}`,
+      `https://graph.facebook.com/v20.0/393021893749837/events?access_token=${apikey}`,
       {
         method: 'POST',
         headers: {
@@ -180,7 +180,7 @@ export class PixelService {
     const apikey = process.env.API_KEY_PIXEL;
     console.log(eventInitiateCheckoutDto.user_data.fbc);
     const response = await fetch(
-      `https://graph.facebook.com/v20.0/1116424846318536/events?access_token=${apikey}`,
+      `https://graph.facebook.com/v20.0/393021893749837/events?access_token=${apikey}`,
       {
         method: 'POST',
         headers: {
