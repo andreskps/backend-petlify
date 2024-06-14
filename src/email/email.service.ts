@@ -20,13 +20,13 @@ export class EmailService {
     try {
       const mail = await this.mailService.sendMail({
         to: orderDetails.email,
-        from: 'fernando@petlify.com',
+        from: 'sara@petlify.com',
         subject: 'Detalles de tu pedido',
         template: 'order',
         context: {
-          name: 'Fernando',
-          code: '1234',
-          url: 'https://petlify.com',
+          name: orderDetails.name,
+          code: orderDetails.id,
+          url: 'https://www.petlify.online',
           orderDetails: {
             ...orderDetails,
             createdAt: orderDetails.createdAt.toString(),
